@@ -1,0 +1,125 @@
+[
+  {
+    "phrase": [["mission", "show windows", "overview"]],
+    "action": { "type": "shortcut", "code": 126, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": ["next", "window"],
+    "action": { "type": "shortcut", "code": 50, "modifiers": ["cmd"] },
+    "category": "Windowing"
+  },
+
+  {
+    "phrase": ["snap", "left"],
+    "action": { "type": "shell", "command": "windows snap left" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": ["snap", "right"],
+    "action": { "type": "shell", "command": "windows snap right" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": ["snap", ["maximize", "full"]],
+    "action": { "type": "shell", "command": "windows snap maximize" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": ["snap", "center"],
+    "action": { "type": "shell", "command": "windows snap center" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": ["snap", ["next", "next monitor"]],
+    "action": { "type": "shell", "command": "windows snap next" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": ["snap", ["prev", "previous monitor"]],
+    "action": { "type": "shell", "command": "windows snap prev" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["maximize", "full screen"]],
+    "action": { "type": "shell", "command": "windows snap maximize" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["next monitor", "other screen", "move next"]],
+    "action": { "type": "shell", "command": "windows snap next" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["previous monitor", "move back"]],
+    "action": { "type": "shell", "command": "windows snap prev" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["center window", "center"]],
+    "action": { "type": "shell", "command": "windows snap center" },
+    "category": "Windowing"
+  },
+
+  {
+    "phrase": [["send", "throw", "move"], "desk", "<number>"],
+    "action": { "type": "shell", "command": "windows move-to-space" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["send", "throw", "move"], "tab", "desk", "<number>"],
+    "action": { "type": "shell", "command": "windows tab-to-space" },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["send", "throw", "move"], "tab", "window", "<number>"],
+    "action": { "type": "shell", "command": "windows tab-to-window" },
+    "category": "Windowing"
+  },
+
+  {
+    "phrase": [["desk", "desktop"], "1"],
+    "action": { "type": "shortcut", "code": 18, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "2"],
+    "action": { "type": "shortcut", "code": 19, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "3"],
+    "action": { "type": "shortcut", "code": 20, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "4"],
+    "action": { "type": "shortcut", "code": 21, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "5"],
+    "action": { "type": "shortcut", "code": 23, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "6"],
+    "action": { "type": "shortcut", "code": 22, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "7"],
+    "action": { "type": "shortcut", "code": 26, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "8"],
+    "action": { "type": "shortcut", "code": 28, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  },
+  {
+    "phrase": [["desk", "desktop"], "9"],
+    "action": { "type": "shortcut", "code": 25, "modifiers": ["ctrl"] },
+    "category": "Windowing"
+  }
+]

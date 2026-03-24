@@ -1,0 +1,12 @@
+<div id="settings-table-container" class="settings-table">
+    <div class="table-header" style="grid-template-columns: 1fr 1fr;">
+        <div>Voice Command</div>
+        <div style="text-align: right;">Action</div>
+    </div>
+    {{range .Commands}}
+    <div class="settings-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="label">{{.Phrase}}</div>
+        <div style="text-align: right; opacity: 0.7;">{{.Description}}</div>
+    </div>
+    {{end}}
+</div>

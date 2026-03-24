@@ -1,0 +1,18 @@
+{
+  "id": "windows",
+  "name": "Windows",
+  "capabilities": ["windows", "shell"],
+  "version": "1.0.0",
+  "description": "Native window management — snap, move to space, switch desktops, browser tab operations. Uses built-in OS primitives without a tiling system.",
+  "author": "BranchKit",
+  "run": "./windows-plugin",
+  "store_data": {
+    "voice_commands": "commands.json"
+  },
+  "action_prefix": "windows",
+  "hooks": {
+    "on_action": true,
+    "settings_tabs": [{ "label": "Commands", "key": "commands" }],
+    "render_settings": true
+  }
+}
