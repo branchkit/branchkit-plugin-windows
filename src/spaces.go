@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"branchkit.local/shared"
 )
 
 // spaceCodes maps Mission Control space numbers (1-9) to macOS virtual keycodes.
@@ -22,8 +24,8 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 		return
 	}
 
-	wm, err := platform.GetWorldModel()
-	if err != nil {
+	var wm shared.WorldModel
+	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
 		log("move-to-space: get world model: %v", err)
 		return
 	}
@@ -48,7 +50,10 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 
 	// Fallback: AppleScript to find frontmost window position
 	if !found {
-		result, err := platform.RunApplescript(`tell application "System Events" to tell (first process whose frontmost is true) to get position of window 1`)
+		var result shared.ApplescriptResult
+		err := plugin.Call("native.run_applescript", map[string]string{
+			"script": `tell application "System Events" to tell (first process whose frontmost is true) to get position of window 1`,
+		}, &result)
 		if err == nil && result.ExitCode == 0 {
 			parts := strings.Split(result.Stdout, ",")
 			if len(parts) == 2 {
@@ -73,7 +78,11 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 	clickY := winY + 10
 
 	// Warp cursor to title bar
-	if err := platform.WarpCursor(clickX, clickY); err != nil {
+	warpReq := struct {
+		X int `json:"x"`
+		Y int `json:"y"`
+	}{X: clickX, Y: clickY}
+	if err := plugin.Call("native.warp_cursor", warpReq, nil); err != nil {
 		log("move-to-space: warp cursor: %v", err)
 		return
 	}
@@ -109,8 +118,8 @@ func handleMoveTabToSpace(space int, appID string) {
 
 	// Capture active tab ID
 	captureScript := fmt.Sprintf(`tell application "%s" to get {URL, id} of active tab of window 1`, appName)
-	result, err := platform.RunApplescript(captureScript)
-	if err != nil || result.ExitCode != 0 {
+	var result shared.ApplescriptResult
+	if err := plugin.Call("native.run_applescript", map[string]string{"script": captureScript}, &result); err != nil || result.ExitCode != 0 {
 		log("tab-to-space: capture tab failed: %v", err)
 		return
 	}
@@ -123,8 +132,8 @@ func handleMoveTabToSpace(space int, appID string) {
 	tabID := strings.TrimSpace(parts[1])
 
 	// Check if target space has an existing browser window
-	wm, err := platform.GetWorldModel()
-	if err != nil {
+	var wm shared.WorldModel
+	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
 		log("tab-to-space: get world model: %v", err)
 		return
 	}
@@ -158,8 +167,7 @@ func handleMoveTabToSpace(space int, appID string) {
 	close tab 2 of newWin
 end tell`, appName, tabID)
 	}
-	_, err = platform.RunApplescript(deliverScript)
-	if err != nil {
+	if err := plugin.Call("native.run_applescript", map[string]string{"script": deliverScript}, nil); err != nil {
 		log("tab-to-space: deliver tab: %v", err)
 	}
 }
@@ -175,8 +183,8 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 
 	// Capture active tab ID
 	captureScript := fmt.Sprintf(`tell application "%s" to get {URL, id} of active tab of window 1`, appName)
-	result, err := platform.RunApplescript(captureScript)
-	if err != nil || result.ExitCode != 0 {
+	var result shared.ApplescriptResult
+	if err := plugin.Call("native.run_applescript", map[string]string{"script": captureScript}, &result); err != nil || result.ExitCode != 0 {
 		log("tab-to-window: capture tab failed: %v", err)
 		return
 	}
@@ -189,8 +197,8 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 	tabID := strings.TrimSpace(parts[1])
 
 	// Get world model to find target window
-	wm, err := platform.GetWorldModel()
-	if err != nil {
+	var wm shared.WorldModel
+	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
 		log("tab-to-window: get world model: %v", err)
 		return
 	}
@@ -210,16 +218,15 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 
 	targetWinID := browserWindows[windowIndex-1]
 	deliverScript := fmt.Sprintf(`tell application "%s" to move tab id %s to window id %s`, appName, tabID, targetWinID)
-	_, err = platform.RunApplescript(deliverScript)
-	if err != nil {
+	if err := plugin.Call("native.run_applescript", map[string]string{"script": deliverScript}, nil); err != nil {
 		log("tab-to-window: deliver tab: %v", err)
 	}
 }
 
 // executeAction calls the actuator's Execute endpoint with a raw action JSON.
 func executeAction(action json.RawMessage) {
-	_, err := platform.Execute(action)
-	if err != nil {
+	req := shared.ExecuteActionRequest{Action: action}
+	if err := plugin.Call("execute", req, nil); err != nil {
 		log("execute: %v", err)
 	}
 }

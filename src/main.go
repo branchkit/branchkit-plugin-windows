@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -10,7 +10,7 @@ import (
 	"branchkit.local/shared"
 )
 
-var platform *shared.PlatformClient
+var plugin *shared.Plugin
 
 // --- Request/Response types ---
 
@@ -24,27 +24,29 @@ type OnActionResponse struct {
 	Result string `json:"result"` // "handled" or "pass"
 }
 
-func handleHealth(w http.ResponseWriter, r *http.Request) {
-	shared.WriteJSON(w, map[string]bool{"ready": true})
+// rpcHandler creates a HandlerFunc that unmarshals params into the given request type,
+// calls the handler, and returns the result.
+func rpcHandler[Req any](fn func(*Req) (any, error)) shared.HandlerFunc {
+	return func(params json.RawMessage) (any, error) {
+		var req Req
+		if len(params) > 0 {
+			if err := json.Unmarshal(params, &req); err != nil {
+				return nil, fmt.Errorf("bad params: %w", err)
+			}
+		}
+		return fn(&req)
+	}
 }
 
-func handleOnAction(w http.ResponseWriter, r *http.Request) {
-	var req OnActionRequest
-	if err := shared.ReadJSON(r, &req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
+func handleOnAction(req *OnActionRequest) (any, error) {
 	sub, ok := strings.CutPrefix(req.Action, "windows ")
 	if !ok {
-		shared.WriteJSON(w, OnActionResponse{Result: "pass"})
-		return
+		return OnActionResponse{Result: "pass"}, nil
 	}
 
 	parts := strings.Fields(sub)
 	if len(parts) == 0 {
-		shared.WriteJSON(w, OnActionResponse{Result: "pass"})
-		return
+		return OnActionResponse{Result: "pass"}, nil
 	}
 
 	cmd := parts[0]
@@ -106,11 +108,10 @@ func handleOnAction(w http.ResponseWriter, r *http.Request) {
 
 	default:
 		log("unknown command: %s", cmd)
-		shared.WriteJSON(w, OnActionResponse{Result: "pass"})
-		return
+		return OnActionResponse{Result: "pass"}, nil
 	}
 
-	shared.WriteJSON(w, OnActionResponse{Result: "handled"})
+	return OnActionResponse{Result: "handled"}, nil
 }
 
 func log(format string, args ...any) {
@@ -118,12 +119,10 @@ func log(format string, args ...any) {
 }
 
 func main() {
-	platform = shared.NewPlatformClient()
+	plugin = shared.NewPlugin()
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /health", handleHealth)
-	mux.HandleFunc("POST /hooks/on-action", handleOnAction)
-	mux.HandleFunc("POST /hooks/render-settings", handleRenderSettings)
+	plugin.Handle("on_action", rpcHandler(handleOnAction))
+	plugin.Handle("render_settings", rpcHandler(handleRenderSettingsRPC))
 
-	shared.RunPlugin(mux)
+	plugin.Run()
 }

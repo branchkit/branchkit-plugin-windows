@@ -4,7 +4,6 @@ import (
 	"bytes"
 	_ "embed"
 	"html/template"
-	"net/http"
 
 	"branchkit.local/shared"
 )
@@ -58,18 +57,14 @@ func renderSettings(search string) string {
 	return buf.String()
 }
 
-func handleRenderSettings(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		TabKey string `json:"tab_key"`
-		Search string `json:"search"`
-	}
-	if err := shared.ReadJSON(r, &req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+type RenderSettingsRequest struct {
+	TabKey string `json:"tab_key"`
+	Search string `json:"search"`
+}
 
+func handleRenderSettingsRPC(req *RenderSettingsRequest) (any, error) {
 	html := renderSettings(req.Search)
-	shared.WriteJSON(w, shared.SettingsResponse{HTML: html})
+	return shared.SettingsResponse{HTML: html}, nil
 }
 
 // containsFold does a case-insensitive substring match.
