@@ -64,7 +64,7 @@ type RenderSettingsRequest struct {
 
 func handleRenderSettingsRPC(req *RenderSettingsRequest) (any, error) {
 	html := renderSettings(req.Search)
-	return shared.SettingsResponse{HTML: html}, nil
+	return shared.RenderSettingsResponse{HTML: html}, nil
 }
 
 // containsFold does a case-insensitive substring match.
