@@ -10,7 +10,7 @@
     "voice_commands": "commands.json"
   },
   "action_prefix": "windows",
-  "hooks": {
+  "implements": {
     "on_action": true,
     "settings_tabs": [{ "label": "Commands", "key": "commands" }],
     "render_settings": true
