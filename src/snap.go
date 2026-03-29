@@ -3,7 +3,7 @@ package main
 import (
 	"math"
 
-	"branchkit.local/shared"
+	"github.com/branchkit/plugin-sdk-go"
 )
 
 const menuBarHeight = 25

@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"html/template"
 
-	"branchkit.local/shared"
+	"github.com/branchkit/plugin-sdk-go"
 )
 
 //go:embed templates/settings.html

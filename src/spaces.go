@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"branchkit.local/shared"
+	"github.com/branchkit/plugin-sdk-go"
 )
 
 // spaceCodes maps Mission Control space numbers (1-9) to macOS virtual keycodes.

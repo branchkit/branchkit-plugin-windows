@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"branchkit.local/shared"
+	"github.com/branchkit/plugin-sdk-go"
 )
 
 func makeTestWorld() (*shared.WindowInfo, shared.DisplayInfo, []shared.DisplayInfo) {

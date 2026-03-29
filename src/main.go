@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"branchkit.local/shared"
+	"github.com/branchkit/plugin-sdk-go"
 )
 
 var plugin *shared.Plugin
@@ -118,8 +118,32 @@ func log(format string, args ...any) {
 	fmt.Fprintf(os.Stderr, "[windows] "+format+"\n", args...)
 }
 
+func pushCommands(p *shared.Plugin) {
+	pluginDir := os.Getenv("BRANCHKIT_PLUGIN_DIR")
+	if pluginDir == "" {
+		return
+	}
+	data, err := os.ReadFile(pluginDir + "/commands.json")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[WINDOWS] failed to read commands.json: %v\n", err)
+		return
+	}
+	var commands []json.RawMessage
+	if err := json.Unmarshal(data, &commands); err != nil {
+		fmt.Fprintf(os.Stderr, "[WINDOWS] failed to parse commands.json: %v\n", err)
+		return
+	}
+	var resp struct{ Count int `json:"count"` }
+	if err := p.Call("grammar.push", map[string]any{"commands": commands}, &resp); err != nil {
+		fmt.Fprintf(os.Stderr, "[WINDOWS] grammar.push failed: %v\n", err)
+		return
+	}
+	fmt.Fprintf(os.Stderr, "[WINDOWS] Registered %d command variants\n", resp.Count)
+}
+
 func main() {
 	plugin = shared.NewPlugin()
+	pushCommands(plugin)
 
 	plugin.Handle("on_action", rpcHandler(handleOnAction))
 	plugin.Handle("render_settings", rpcHandler(handleRenderSettingsRPC))
