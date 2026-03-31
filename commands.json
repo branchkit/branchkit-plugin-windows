@@ -12,68 +12,68 @@
 
   {
     "phrase": ["snap", "left"],
-    "action": { "type": "shell", "command": "windows snap left" },
+    "action": { "type": "route", "command": "windows snap left" },
     "category": "Windowing"
   },
   {
     "phrase": ["snap", "right"],
-    "action": { "type": "shell", "command": "windows snap right" },
+    "action": { "type": "route", "command": "windows snap right" },
     "category": "Windowing"
   },
   {
     "phrase": ["snap", ["maximize", "full"]],
-    "action": { "type": "shell", "command": "windows snap maximize" },
+    "action": { "type": "route", "command": "windows snap maximize" },
     "category": "Windowing"
   },
   {
     "phrase": ["snap", "center"],
-    "action": { "type": "shell", "command": "windows snap center" },
+    "action": { "type": "route", "command": "windows snap center" },
     "category": "Windowing"
   },
   {
     "phrase": ["snap", ["next", "next monitor"]],
-    "action": { "type": "shell", "command": "windows snap next" },
+    "action": { "type": "route", "command": "windows snap next" },
     "category": "Windowing"
   },
   {
     "phrase": ["snap", ["prev", "previous monitor"]],
-    "action": { "type": "shell", "command": "windows snap prev" },
+    "action": { "type": "route", "command": "windows snap prev" },
     "category": "Windowing"
   },
   {
     "phrase": [["maximize", "full screen"]],
-    "action": { "type": "shell", "command": "windows snap maximize" },
+    "action": { "type": "route", "command": "windows snap maximize" },
     "category": "Windowing"
   },
   {
     "phrase": [["next monitor", "other screen", "move next"]],
-    "action": { "type": "shell", "command": "windows snap next" },
+    "action": { "type": "route", "command": "windows snap next" },
     "category": "Windowing"
   },
   {
     "phrase": [["previous monitor", "move back"]],
-    "action": { "type": "shell", "command": "windows snap prev" },
+    "action": { "type": "route", "command": "windows snap prev" },
     "category": "Windowing"
   },
   {
     "phrase": [["center window", "center"]],
-    "action": { "type": "shell", "command": "windows snap center" },
+    "action": { "type": "route", "command": "windows snap center" },
     "category": "Windowing"
   },
 
   {
     "phrase": [["send", "throw", "move"], "desk", "<number>"],
-    "action": { "type": "shell", "command": "windows move-to-space" },
+    "action": { "type": "route", "command": "windows move-to-space" },
     "category": "Windowing"
   },
   {
     "phrase": [["send", "throw", "move"], "tab", "desk", "<number>"],
-    "action": { "type": "shell", "command": "windows tab-to-space" },
+    "action": { "type": "route", "command": "windows tab-to-space" },
     "category": "Windowing"
   },
   {
     "phrase": [["send", "throw", "move"], "tab", "window", "<number>"],
-    "action": { "type": "shell", "command": "windows tab-to-window" },
+    "action": { "type": "route", "command": "windows tab-to-window" },
     "category": "Windowing"
   },
 
