@@ -13,32 +13,88 @@
   {
     "phrase": ["snap", "left"],
     "action": { "type": "route", "command": "windows snap left" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", "right"],
     "action": { "type": "route", "command": "windows snap right" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", ["maximize", "full"]],
     "action": { "type": "route", "command": "windows snap maximize" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", "center"],
     "action": { "type": "route", "command": "windows snap center" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", ["next", "next monitor"]],
     "action": { "type": "route", "command": "windows snap next" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", ["prev", "previous monitor"]],
     "action": { "type": "route", "command": "windows snap prev" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+
+  {
+    "phrase": ["left"],
+    "action": { "type": "route", "command": "windows snap left" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+  {
+    "phrase": ["right"],
+    "action": { "type": "route", "command": "windows snap right" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+  {
+    "phrase": [["maximize", "full"]],
+    "action": { "type": "route", "command": "windows snap maximize" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+  {
+    "phrase": ["center"],
+    "action": { "type": "route", "command": "windows snap center" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+  {
+    "phrase": [["next", "next monitor"]],
+    "action": { "type": "route", "command": "windows snap next" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+  {
+    "phrase": [["prev", "previous monitor"]],
+    "action": { "type": "route", "command": "windows snap prev" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "sets_tags": ["plugin.windows.snap_mode"]
+  },
+  {
+    "phrase": ["done"],
+    "action": { "type": "route", "command": "windows snap done" },
+    "category": "Snap Mode",
+    "requires_tags": ["plugin.windows.snap_mode"],
+    "clears_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": [["maximize", "full screen"]],

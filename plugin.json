@@ -10,6 +10,22 @@
     "voice_commands": "commands.json"
   },
   "action_prefix": "windows",
+  "provides": {
+    "tags": {
+      "plugin.windows.snap_mode": {
+        "label": "Snap Mode",
+        "description": "Snap mode active — say direction words to snap windows without repeating 'snap'"
+      }
+    },
+    "tag_namespaces": [
+      {
+        "prefix": "plugin.windows.",
+        "lifecycle": "persistent",
+        "scoped": true,
+        "access": "open"
+      }
+    ]
+  },
   "implements": {
     "on_action": true,
     "settings_tabs": [{ "label": "Commands", "key": "commands" }],
