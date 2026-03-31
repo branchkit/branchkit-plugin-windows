@@ -19,8 +19,9 @@
     },
     "tag_namespaces": [
       {
-        "prefix": "plugin.windows.",
-        "lifecycle": "persistent",
+        "prefix": "plugin.windows.snap_mode",
+        "lifecycle": "transient",
+        "clear_on": "_platform.speech.session_ended",
         "scoped": true,
         "access": "open"
       }

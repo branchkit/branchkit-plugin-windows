@@ -23,7 +23,7 @@
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", ["maximize", "full"]],
+    "phrase": ["snap", ["full", "maximize"]],
     "action": { "type": "route", "command": "windows snap maximize" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
@@ -35,13 +35,13 @@
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", ["next", "next monitor"]],
+    "phrase": ["snap", "next"],
     "action": { "type": "route", "command": "windows snap next" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", ["prev", "previous monitor"]],
+    "phrase": ["snap", "previous"],
     "action": { "type": "route", "command": "windows snap prev" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
@@ -62,7 +62,7 @@
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": [["maximize", "full"]],
+    "phrase": [["full", "maximize"]],
     "action": { "type": "route", "command": "windows snap maximize" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
@@ -76,14 +76,14 @@
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": [["next", "next monitor"]],
+    "phrase": ["next"],
     "action": { "type": "route", "command": "windows snap next" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": [["prev", "previous monitor"]],
+    "phrase": ["previous"],
     "action": { "type": "route", "command": "windows snap prev" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
@@ -95,26 +95,6 @@
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "clears_tags": ["plugin.windows.snap_mode"]
-  },
-  {
-    "phrase": [["maximize", "full screen"]],
-    "action": { "type": "route", "command": "windows snap maximize" },
-    "category": "Windowing"
-  },
-  {
-    "phrase": [["next monitor", "other screen", "move next"]],
-    "action": { "type": "route", "command": "windows snap next" },
-    "category": "Windowing"
-  },
-  {
-    "phrase": [["previous monitor", "move back"]],
-    "action": { "type": "route", "command": "windows snap prev" },
-    "category": "Windowing"
-  },
-  {
-    "phrase": [["center window", "center"]],
-    "action": { "type": "route", "command": "windows snap center" },
-    "category": "Windowing"
   },
 
   {
