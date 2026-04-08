@@ -21,7 +21,7 @@
       {
         "prefix": "plugin.windows.snap_mode",
         "lifecycle": "transient",
-        "clear_on": "_platform.speech.session_ended",
+        "clear_on": "_platform.input.session_ended",
         "scoped": true,
         "access": "open"
       }
