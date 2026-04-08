@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 
@@ -51,12 +50,12 @@ func handleOnAction(req *OnActionRequest) (any, error) {
 
 	cmd := parts[0]
 	args := parts[1:]
-	log("action: %s (args: %v)", cmd, args)
+	shared.Logf("windows", "action: %s (args: %v)", cmd, args)
 
 	switch cmd {
 	case "snap":
 		if len(args) < 1 {
-			log("snap: missing direction")
+			shared.Logf("windows", "snap: missing direction")
 			break
 		}
 		direction := strings.Join(args, " ")
@@ -64,24 +63,24 @@ func handleOnAction(req *OnActionRequest) (any, error) {
 
 	case "move-to-space":
 		if len(args) < 1 {
-			log("move-to-space: missing space number")
+			shared.Logf("windows", "move-to-space: missing space number")
 			break
 		}
 		space, err := strconv.Atoi(args[0])
 		if err != nil || space < 1 || space > 9 {
-			log("move-to-space: invalid space: %s", args[0])
+			shared.Logf("windows", "move-to-space: invalid space: %s", args[0])
 			break
 		}
 		handleMoveToSpace(req.ActiveWindowID, space)
 
 	case "tab-to-space":
 		if len(args) < 1 {
-			log("tab-to-space: missing space number")
+			shared.Logf("windows", "tab-to-space: missing space number")
 			break
 		}
 		space, err := strconv.Atoi(args[0])
 		if err != nil || space < 1 || space > 9 {
-			log("tab-to-space: invalid space: %s", args[0])
+			shared.Logf("windows", "tab-to-space: invalid space: %s", args[0])
 			break
 		}
 		appID := ""
@@ -92,12 +91,12 @@ func handleOnAction(req *OnActionRequest) (any, error) {
 
 	case "tab-to-window":
 		if len(args) < 1 {
-			log("tab-to-window: missing window index")
+			shared.Logf("windows", "tab-to-window: missing window index")
 			break
 		}
 		idx, err := strconv.Atoi(args[0])
 		if err != nil || idx < 1 {
-			log("tab-to-window: invalid index: %s", args[0])
+			shared.Logf("windows", "tab-to-window: invalid index: %s", args[0])
 			break
 		}
 		appID := ""
@@ -107,24 +106,20 @@ func handleOnAction(req *OnActionRequest) (any, error) {
 		handleMoveTabToWindow(idx, appID)
 
 	default:
-		log("unknown command: %s", cmd)
+		shared.Logf("windows", "unknown command: %s", cmd)
 		return OnActionResponse{Result: "pass"}, nil
 	}
 
 	return OnActionResponse{Result: "handled"}, nil
 }
 
-func log(format string, args ...any) {
-	fmt.Fprintf(os.Stderr, "[windows] "+format+"\n", args...)
-}
-
 func pushCommands(p *shared.Plugin) {
 	count, err := shared.PushCommands(p)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[WINDOWS] %v\n", err)
+		shared.Logf("windows", "%v", err)
 		return
 	}
-	fmt.Fprintf(os.Stderr, "[WINDOWS] Registered %d command variants\n", count)
+	shared.Logf("windows", "Registered %d command variants", count)
 }
 
 func main() {

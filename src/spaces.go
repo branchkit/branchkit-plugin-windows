@@ -20,13 +20,13 @@ var spaceCodes = map[int]int{
 func handleMoveToSpace(activeWindowID *string, space int) {
 	code, ok := spaceCodes[space]
 	if !ok {
-		log("move-to-space: invalid space %d", space)
+		shared.Logf("windows","move-to-space: invalid space %d", space)
 		return
 	}
 
 	var wm shared.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
-		log("move-to-space: get world model: %v", err)
+		shared.Logf("windows","move-to-space: get world model: %v", err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 	}
 
 	if !found {
-		log("move-to-space: could not find window position")
+		shared.Logf("windows","move-to-space: could not find window position")
 		return
 	}
 
@@ -83,7 +83,7 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 		Y int `json:"y"`
 	}{X: clickX, Y: clickY}
 	if err := plugin.Call("native.warp_cursor", warpReq, nil); err != nil {
-		log("move-to-space: warp cursor: %v", err)
+		shared.Logf("windows","move-to-space: warp cursor: %v", err)
 		return
 	}
 	time.Sleep(50 * time.Millisecond)
@@ -105,12 +105,12 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 // handleMoveTabToSpace moves the active browser tab to another Mission Control space.
 func handleMoveTabToSpace(space int, appID string) {
 	if appID == "" {
-		log("tab-to-space: no app_id")
+		shared.Logf("windows","tab-to-space: no app_id")
 		return
 	}
 	code, ok := spaceCodes[space]
 	if !ok {
-		log("tab-to-space: invalid space %d", space)
+		shared.Logf("windows","tab-to-space: invalid space %d", space)
 		return
 	}
 
@@ -120,13 +120,13 @@ func handleMoveTabToSpace(space int, appID string) {
 	captureScript := fmt.Sprintf(`tell application "%s" to get {URL, id} of active tab of window 1`, appName)
 	var result shared.ApplescriptResult
 	if err := plugin.Call("native.run_applescript", map[string]string{"script": captureScript}, &result); err != nil || result.ExitCode != 0 {
-		log("tab-to-space: capture tab failed: %v", err)
+		shared.Logf("windows","tab-to-space: capture tab failed: %v", err)
 		return
 	}
 
 	parts := strings.Split(result.Stdout, ",")
 	if len(parts) < 2 {
-		log("tab-to-space: unexpected capture result: %s", result.Stdout)
+		shared.Logf("windows","tab-to-space: unexpected capture result: %s", result.Stdout)
 		return
 	}
 	tabID := strings.TrimSpace(parts[1])
@@ -134,7 +134,7 @@ func handleMoveTabToSpace(space int, appID string) {
 	// Check if target space has an existing browser window
 	var wm shared.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
-		log("tab-to-space: get world model: %v", err)
+		shared.Logf("windows","tab-to-space: get world model: %v", err)
 		return
 	}
 
@@ -168,14 +168,14 @@ func handleMoveTabToSpace(space int, appID string) {
 end tell`, appName, tabID)
 	}
 	if err := plugin.Call("native.run_applescript", map[string]string{"script": deliverScript}, nil); err != nil {
-		log("tab-to-space: deliver tab: %v", err)
+		shared.Logf("windows","tab-to-space: deliver tab: %v", err)
 	}
 }
 
 // handleMoveTabToWindow moves the active browser tab to another browser window by index.
 func handleMoveTabToWindow(windowIndex int, appID string) {
 	if appID == "" {
-		log("tab-to-window: no app_id")
+		shared.Logf("windows","tab-to-window: no app_id")
 		return
 	}
 
@@ -185,13 +185,13 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 	captureScript := fmt.Sprintf(`tell application "%s" to get {URL, id} of active tab of window 1`, appName)
 	var result shared.ApplescriptResult
 	if err := plugin.Call("native.run_applescript", map[string]string{"script": captureScript}, &result); err != nil || result.ExitCode != 0 {
-		log("tab-to-window: capture tab failed: %v", err)
+		shared.Logf("windows","tab-to-window: capture tab failed: %v", err)
 		return
 	}
 
 	parts := strings.Split(result.Stdout, ",")
 	if len(parts) < 2 {
-		log("tab-to-window: unexpected capture result: %s", result.Stdout)
+		shared.Logf("windows","tab-to-window: unexpected capture result: %s", result.Stdout)
 		return
 	}
 	tabID := strings.TrimSpace(parts[1])
@@ -199,7 +199,7 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 	// Get world model to find target window
 	var wm shared.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
-		log("tab-to-window: get world model: %v", err)
+		shared.Logf("windows","tab-to-window: get world model: %v", err)
 		return
 	}
 
@@ -212,14 +212,14 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 	}
 
 	if windowIndex < 1 || windowIndex > len(browserWindows) {
-		log("tab-to-window: window index %d out of range (have %d)", windowIndex, len(browserWindows))
+		shared.Logf("windows","tab-to-window: window index %d out of range (have %d)", windowIndex, len(browserWindows))
 		return
 	}
 
 	targetWinID := browserWindows[windowIndex-1]
 	deliverScript := fmt.Sprintf(`tell application "%s" to move tab id %s to window id %s`, appName, tabID, targetWinID)
 	if err := plugin.Call("native.run_applescript", map[string]string{"script": deliverScript}, nil); err != nil {
-		log("tab-to-window: deliver tab: %v", err)
+		shared.Logf("windows","tab-to-window: deliver tab: %v", err)
 	}
 }
 
@@ -227,7 +227,7 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 func executeAction(action json.RawMessage) {
 	req := shared.ExecuteActionRequest{Action: action}
 	if err := plugin.Call("execute", req, nil); err != nil {
-		log("execute: %v", err)
+		shared.Logf("windows","execute: %v", err)
 	}
 }
 

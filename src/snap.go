@@ -12,7 +12,7 @@ const menuBarHeight = 25
 func handleSnap(activeWindowID *string, direction string) {
 	var wm shared.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
-		log("snap: failed to get world model: %v", err)
+		shared.Logf("windows", "snap: failed to get world model: %v", err)
 		return
 	}
 
@@ -23,7 +23,7 @@ func handleSnap(activeWindowID *string, direction string) {
 		winID = *wm.ActiveWindowID
 	}
 	if winID == "" {
-		log("snap: no active window")
+		shared.Logf("windows", "snap: no active window")
 		return
 	}
 
@@ -35,12 +35,12 @@ func handleSnap(activeWindowID *string, direction string) {
 		}
 	}
 	if win == nil {
-		log("snap: window %s not found", winID)
+		shared.Logf("windows", "snap: window %s not found", winID)
 		return
 	}
 
 	if len(wm.Displays) == 0 {
-		log("snap: no displays")
+		shared.Logf("windows", "snap: no displays")
 		return
 	}
 
@@ -58,11 +58,11 @@ func handleSnap(activeWindowID *string, direction string) {
 
 	frame := calculateSnapGeometry(win, screen, screenIdx, wm.Displays, direction)
 	if frame == nil {
-		log("snap: no geometry for direction %q", direction)
+		shared.Logf("windows", "snap: no geometry for direction %q", direction)
 		return
 	}
 
-	log("snap: window=%s direction=%s → x=%d y=%d w=%d h=%d (screen %d: %dx%d)",
+	shared.Logf("windows", "snap: window=%s direction=%s → x=%d y=%d w=%d h=%d (screen %d: %dx%d)",
 		winID, direction, frame.X, frame.Y, frame.W, frame.H,
 		screenIdx, screen.W, screen.H)
 
@@ -76,9 +76,9 @@ func handleSnap(activeWindowID *string, direction string) {
 		Readback: false,
 	}
 	if err := plugin.Call("native.batch_set_frames", batchReq, nil); err != nil {
-		log("snap: batch-set-frames error: %v", err)
+		shared.Logf("windows", "snap: batch-set-frames error: %v", err)
 	} else {
-		log("snap: batch-set-frames succeeded")
+		shared.Logf("windows", "snap: batch-set-frames succeeded")
 	}
 }
 

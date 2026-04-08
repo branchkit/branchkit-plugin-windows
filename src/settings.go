@@ -3,8 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/a-h/templ"
 	"github.com/branchkit/plugin-sdk-go"
@@ -14,7 +12,7 @@ import (
 func renderTempl(c templ.Component) string {
 	var buf bytes.Buffer
 	if err := c.Render(context.Background(), &buf); err != nil {
-		fmt.Fprintf(os.Stderr, "[SETTINGS] templ render error: %v\n", err)
+		shared.Logf("windows", "settings: templ render error: %v", err)
 		return ""
 	}
 	return buf.String()
