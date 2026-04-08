@@ -2,16 +2,23 @@ package main
 
 import (
 	"bytes"
-	_ "embed"
-	"html/template"
+	"context"
+	"fmt"
+	"os"
 
+	"github.com/a-h/templ"
 	"github.com/branchkit/plugin-sdk-go"
 )
 
-//go:embed templates/settings.html
-var settingsHTML string
-
-var settingsTmpl = template.Must(template.New("windows-settings").Parse(settingsHTML))
+// renderTempl renders a templ component to an HTML string.
+func renderTempl(c templ.Component) string {
+	var buf bytes.Buffer
+	if err := c.Render(context.Background(), &buf); err != nil {
+		fmt.Fprintf(os.Stderr, "[SETTINGS] templ render error: %v\n", err)
+		return ""
+	}
+	return buf.String()
+}
 
 type commandRow struct {
 	Phrase      string
@@ -45,16 +52,7 @@ func renderSettings(search string) string {
 		cmds = filtered
 	}
 
-	data := struct {
-		Commands []commandRow
-	}{Commands: cmds}
-
-	var buf bytes.Buffer
-	if err := settingsTmpl.Execute(&buf, data); err != nil {
-		log("settings template error: %v", err)
-		return ""
-	}
-	return buf.String()
+	return renderTempl(WindowsSettings(cmds))
 }
 
 type RenderSettingsRequest struct {
