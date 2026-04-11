@@ -50,7 +50,7 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 
 	// Fallback: AppleScript to find frontmost window position
 	if !found {
-		var result shared.ApplescriptResult
+		var result shared.NativeRunApplescriptResponse
 		err := plugin.Call("native.run_applescript", map[string]string{
 			"script": `tell application "System Events" to tell (first process whose frontmost is true) to get position of window 1`,
 		}, &result)
@@ -118,7 +118,7 @@ func handleMoveTabToSpace(space int, appID string) {
 
 	// Capture active tab ID
 	captureScript := fmt.Sprintf(`tell application "%s" to get {URL, id} of active tab of window 1`, appName)
-	var result shared.ApplescriptResult
+	var result shared.NativeRunApplescriptResponse
 	if err := plugin.Call("native.run_applescript", map[string]string{"script": captureScript}, &result); err != nil || result.ExitCode != 0 {
 		shared.Logf("windows","tab-to-space: capture tab failed: %v", err)
 		return
@@ -183,7 +183,7 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 
 	// Capture active tab ID
 	captureScript := fmt.Sprintf(`tell application "%s" to get {URL, id} of active tab of window 1`, appName)
-	var result shared.ApplescriptResult
+	var result shared.NativeRunApplescriptResponse
 	if err := plugin.Call("native.run_applescript", map[string]string{"script": captureScript}, &result); err != nil || result.ExitCode != 0 {
 		shared.Logf("windows","tab-to-window: capture tab failed: %v", err)
 		return
