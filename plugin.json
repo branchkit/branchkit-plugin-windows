@@ -23,7 +23,8 @@
         "lifecycle": "transient",
         "clear_on": "_platform.input.session_ended",
         "scoped": true,
-        "access": "open"
+        "access": "open",
+        "description": "Snap mode — direction words snap windows without repeating 'snap'."
       }
     ]
   },
