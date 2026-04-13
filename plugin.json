@@ -1,9 +1,13 @@
 {
   "id": "windows",
   "name": "Windows",
-  "capabilities": ["windows", "shell"],
+  "capabilities": [
+    "windows",
+    "input",
+    "shell"
+  ],
   "version": "1.0.0",
-  "description": "Native window management — snap, move to space, switch desktops, browser tab operations. Uses built-in OS primitives without a tiling system.",
+  "description": "Native window management \u2014 snap, move to space, switch desktops, browser tab operations. Uses built-in OS primitives without a tiling system.",
   "author": "BranchKit",
   "run": "./windows-plugin",
   "store_data": {
@@ -14,7 +18,7 @@
     "tags": {
       "plugin.windows.snap_mode": {
         "label": "Snap Mode",
-        "description": "Snap mode active — say direction words to snap windows without repeating 'snap'"
+        "description": "Snap mode active \u2014 say direction words to snap windows without repeating 'snap'"
       }
     },
     "tag_namespaces": [
@@ -24,13 +28,18 @@
         "clear_on": "_platform.input.session_ended",
         "scoped": true,
         "access": "open",
-        "description": "Snap mode — direction words snap windows without repeating 'snap'."
+        "description": "Snap mode \u2014 direction words snap windows without repeating 'snap'."
       }
     ]
   },
   "implements": {
     "on_action": true,
-    "settings_tabs": [{ "label": "Commands", "key": "commands" }],
+    "settings_tabs": [
+      {
+        "label": "Commands",
+        "key": "commands"
+      }
+    ],
     "render_settings": true
   }
 }
