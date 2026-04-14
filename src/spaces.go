@@ -89,17 +89,17 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 	time.Sleep(50 * time.Millisecond)
 
 	// Mouse down
-	executeAction(json.RawMessage(`{"type":"mouse_down","button":"left"}`))
+	dispatchAction(json.RawMessage(`{"type":"mouse_down","button":"left"}`))
 	time.Sleep(25 * time.Millisecond)
 
 	// Ctrl + space number
-	executeAction(json.RawMessage(fmt.Sprintf(
+	dispatchAction(json.RawMessage(fmt.Sprintf(
 		`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, code)))
 
 	time.Sleep(200 * time.Millisecond)
 
 	// Mouse up
-	executeAction(json.RawMessage(`{"type":"mouse_up","button":"left"}`))
+	dispatchAction(json.RawMessage(`{"type":"mouse_up","button":"left"}`))
 }
 
 // handleMoveTabToSpace moves the active browser tab to another Mission Control space.
@@ -151,7 +151,7 @@ func handleMoveTabToSpace(space int, appID string) {
 	}
 
 	// Switch to target space
-	executeAction(json.RawMessage(fmt.Sprintf(
+	dispatchAction(json.RawMessage(fmt.Sprintf(
 		`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, code)))
 
 	time.Sleep(600 * time.Millisecond)
@@ -223,11 +223,11 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 	}
 }
 
-// executeAction calls the actuator's Execute endpoint with a raw action JSON.
-func executeAction(action json.RawMessage) {
-	req := shared.ExecuteActionRequest{Action: action}
-	if err := plugin.Call("execute", req, nil); err != nil {
-		shared.Logf("windows","execute: %v", err)
+// dispatchAction calls the actuator's dispatch RPC method with a raw action JSON.
+func dispatchAction(action json.RawMessage) {
+	req := shared.DispatchActionRequest{Action: action}
+	if err := plugin.Call("dispatch", req, nil); err != nil {
+		shared.Logf("windows","dispatch: %v", err)
 	}
 }
 
