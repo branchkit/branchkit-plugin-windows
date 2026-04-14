@@ -12,86 +12,86 @@
 
   {
     "phrase": ["snap", "left"],
-    "action": { "type": "command", "command": "windows snap left" },
+    "action": { "type": "dispatch", "action": "windows snap left" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", "right"],
-    "action": { "type": "command", "command": "windows snap right" },
+    "action": { "type": "dispatch", "action": "windows snap right" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", ["full", "maximize"]],
-    "action": { "type": "command", "command": "windows snap maximize" },
+    "action": { "type": "dispatch", "action": "windows snap maximize" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", "center"],
-    "action": { "type": "command", "command": "windows snap center" },
+    "action": { "type": "dispatch", "action": "windows snap center" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", "next"],
-    "action": { "type": "command", "command": "windows snap next" },
+    "action": { "type": "dispatch", "action": "windows snap next" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["snap", "previous"],
-    "action": { "type": "command", "command": "windows snap prev" },
+    "action": { "type": "dispatch", "action": "windows snap prev" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
 
   {
     "phrase": ["left"],
-    "action": { "type": "command", "command": "windows snap left" },
+    "action": { "type": "dispatch", "action": "windows snap left" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["right"],
-    "action": { "type": "command", "command": "windows snap right" },
+    "action": { "type": "dispatch", "action": "windows snap right" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": [["full", "maximize"]],
-    "action": { "type": "command", "command": "windows snap maximize" },
+    "action": { "type": "dispatch", "action": "windows snap maximize" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["center"],
-    "action": { "type": "command", "command": "windows snap center" },
+    "action": { "type": "dispatch", "action": "windows snap center" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["next"],
-    "action": { "type": "command", "command": "windows snap next" },
+    "action": { "type": "dispatch", "action": "windows snap next" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["previous"],
-    "action": { "type": "command", "command": "windows snap prev" },
+    "action": { "type": "dispatch", "action": "windows snap prev" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
     "phrase": ["done"],
-    "action": { "type": "command", "command": "windows snap done" },
+    "action": { "type": "dispatch", "action": "windows snap done" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "clears_tags": ["plugin.windows.snap_mode"]
@@ -99,17 +99,17 @@
 
   {
     "phrase": [["send", "throw", "move"], "desk", "<number>"],
-    "action": { "type": "command", "command": "windows move-to-space" },
+    "action": { "type": "dispatch", "action": "windows move-to-space" },
     "category": "Windowing"
   },
   {
     "phrase": [["send", "throw", "move"], "tab", "desk", "<number>"],
-    "action": { "type": "command", "command": "windows tab-to-space" },
+    "action": { "type": "dispatch", "action": "windows tab-to-space" },
     "category": "Windowing"
   },
   {
     "phrase": [["send", "throw", "move"], "tab", "window", "<number>"],
-    "action": { "type": "command", "command": "windows tab-to-window" },
+    "action": { "type": "dispatch", "action": "windows tab-to-window" },
     "category": "Windowing"
   },
 
