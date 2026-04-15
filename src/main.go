@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/branchkit/plugin-sdk-go"
 )
@@ -14,9 +13,11 @@ var plugin *shared.Plugin
 // --- Request/Response types ---
 
 type OnActionRequest struct {
-	Action         string  `json:"action"`
-	ActiveApp      *string `json:"active_app,omitempty"`
-	ActiveWindowID *string `json:"active_window_id,omitempty"`
+	Action         string                 `json:"action"`
+	ActiveApp      *string                `json:"active_app,omitempty"`
+	ActiveWindowID *string                `json:"active_window_id,omitempty"`
+	Params         map[string]interface{} `json:"params,omitempty"`
+	Args           []string               `json:"args,omitempty"`
 }
 
 type OnActionResponse struct {
@@ -38,49 +39,39 @@ func rpcHandler[Req any](fn func(*Req) (any, error)) shared.HandlerFunc {
 }
 
 func handleOnAction(req *OnActionRequest) (any, error) {
-	sub, ok := strings.CutPrefix(req.Action, "windows ")
-	if !ok {
-		return OnActionResponse{Result: "pass"}, nil
-	}
+	p := req.Params
+	args := req.Args
+	shared.Logf("windows", "action: %s (params: %v, args: %v)", req.Action, p, args)
 
-	parts := strings.Fields(sub)
-	if len(parts) == 0 {
-		return OnActionResponse{Result: "pass"}, nil
-	}
-
-	cmd := parts[0]
-	args := parts[1:]
-	shared.Logf("windows", "action: %s (args: %v)", cmd, args)
-
-	switch cmd {
-	case "snap":
-		if len(args) < 1 {
-			shared.Logf("windows", "snap: missing direction")
+	switch req.Action {
+	case "windows.snap":
+		position, _ := p["position"].(string)
+		if position == "" {
+			shared.Logf("windows", "snap: missing position")
 			break
 		}
-		direction := strings.Join(args, " ")
-		handleSnap(req.ActiveWindowID, direction)
+		handleSnap(req.ActiveWindowID, position)
 
-	case "move-to-space":
+	case "windows.move_to_space":
 		if len(args) < 1 {
-			shared.Logf("windows", "move-to-space: missing space number")
+			shared.Logf("windows", "move_to_space: missing space number")
 			break
 		}
 		space, err := strconv.Atoi(args[0])
 		if err != nil || space < 1 || space > 9 {
-			shared.Logf("windows", "move-to-space: invalid space: %s", args[0])
+			shared.Logf("windows", "move_to_space: invalid space: %s", args[0])
 			break
 		}
 		handleMoveToSpace(req.ActiveWindowID, space)
 
-	case "tab-to-space":
+	case "windows.tab_to_space":
 		if len(args) < 1 {
-			shared.Logf("windows", "tab-to-space: missing space number")
+			shared.Logf("windows", "tab_to_space: missing space number")
 			break
 		}
 		space, err := strconv.Atoi(args[0])
 		if err != nil || space < 1 || space > 9 {
-			shared.Logf("windows", "tab-to-space: invalid space: %s", args[0])
+			shared.Logf("windows", "tab_to_space: invalid space: %s", args[0])
 			break
 		}
 		appID := ""
@@ -89,14 +80,14 @@ func handleOnAction(req *OnActionRequest) (any, error) {
 		}
 		handleMoveTabToSpace(space, appID)
 
-	case "tab-to-window":
+	case "windows.tab_to_window":
 		if len(args) < 1 {
-			shared.Logf("windows", "tab-to-window: missing window index")
+			shared.Logf("windows", "tab_to_window: missing window index")
 			break
 		}
 		idx, err := strconv.Atoi(args[0])
 		if err != nil || idx < 1 {
-			shared.Logf("windows", "tab-to-window: invalid index: %s", args[0])
+			shared.Logf("windows", "tab_to_window: invalid index: %s", args[0])
 			break
 		}
 		appID := ""
@@ -106,7 +97,7 @@ func handleOnAction(req *OnActionRequest) (any, error) {
 		handleMoveTabToWindow(idx, appID)
 
 	default:
-		shared.Logf("windows", "unknown command: %s", cmd)
+		shared.Logf("windows", "unknown action: %s", req.Action)
 		return OnActionResponse{Result: "pass"}, nil
 	}
 
