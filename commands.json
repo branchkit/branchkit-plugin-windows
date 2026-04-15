@@ -1,96 +1,96 @@
 [
   {
-    "phrase": [["mission", "show windows", "overview"]],
+    "pattern": [["mission", "show windows", "overview"]],
     "action": { "type": "input.shortcut", "code": 126, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": ["next", "window"],
+    "pattern": ["next", "window"],
     "action": { "type": "input.shortcut", "code": 50, "modifiers": ["cmd"] },
     "category": "Windowing"
   },
 
   {
-    "phrase": ["snap", "left"],
+    "pattern": ["snap", "left"],
     "action": { "type": "dispatch", "action": "windows snap left" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", "right"],
+    "pattern": ["snap", "right"],
     "action": { "type": "dispatch", "action": "windows snap right" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", ["full", "maximize"]],
+    "pattern": ["snap", ["full", "maximize"]],
     "action": { "type": "dispatch", "action": "windows snap maximize" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", "center"],
+    "pattern": ["snap", "center"],
     "action": { "type": "dispatch", "action": "windows snap center" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", "next"],
+    "pattern": ["snap", "next"],
     "action": { "type": "dispatch", "action": "windows snap next" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["snap", "previous"],
+    "pattern": ["snap", "previous"],
     "action": { "type": "dispatch", "action": "windows snap prev" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
 
   {
-    "phrase": ["left"],
+    "pattern": ["left"],
     "action": { "type": "dispatch", "action": "windows snap left" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["right"],
+    "pattern": ["right"],
     "action": { "type": "dispatch", "action": "windows snap right" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": [["full", "maximize"]],
+    "pattern": [["full", "maximize"]],
     "action": { "type": "dispatch", "action": "windows snap maximize" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["center"],
+    "pattern": ["center"],
     "action": { "type": "dispatch", "action": "windows snap center" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["next"],
+    "pattern": ["next"],
     "action": { "type": "dispatch", "action": "windows snap next" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["previous"],
+    "pattern": ["previous"],
     "action": { "type": "dispatch", "action": "windows snap prev" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
   {
-    "phrase": ["done"],
+    "pattern": ["done"],
     "action": { "type": "dispatch", "action": "windows snap done" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
@@ -98,63 +98,63 @@
   },
 
   {
-    "phrase": [["send", "throw", "move"], "desk", "<number>"],
+    "pattern": [["send", "throw", "move"], "desk", "<number>"],
     "action": { "type": "dispatch", "action": "windows move-to-space" },
     "category": "Windowing"
   },
   {
-    "phrase": [["send", "throw", "move"], "tab", "desk", "<number>"],
+    "pattern": [["send", "throw", "move"], "tab", "desk", "<number>"],
     "action": { "type": "dispatch", "action": "windows tab-to-space" },
     "category": "Windowing"
   },
   {
-    "phrase": [["send", "throw", "move"], "tab", "window", "<number>"],
+    "pattern": [["send", "throw", "move"], "tab", "window", "<number>"],
     "action": { "type": "dispatch", "action": "windows tab-to-window" },
     "category": "Windowing"
   },
 
   {
-    "phrase": [["desk", "desktop"], "1"],
+    "pattern": [["desk", "desktop"], "1"],
     "action": { "type": "input.shortcut", "code": 18, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "2"],
+    "pattern": [["desk", "desktop"], "2"],
     "action": { "type": "input.shortcut", "code": 19, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "3"],
+    "pattern": [["desk", "desktop"], "3"],
     "action": { "type": "input.shortcut", "code": 20, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "4"],
+    "pattern": [["desk", "desktop"], "4"],
     "action": { "type": "input.shortcut", "code": 21, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "5"],
+    "pattern": [["desk", "desktop"], "5"],
     "action": { "type": "input.shortcut", "code": 23, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "6"],
+    "pattern": [["desk", "desktop"], "6"],
     "action": { "type": "input.shortcut", "code": 22, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "7"],
+    "pattern": [["desk", "desktop"], "7"],
     "action": { "type": "input.shortcut", "code": 26, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "8"],
+    "pattern": [["desk", "desktop"], "8"],
     "action": { "type": "input.shortcut", "code": 28, "modifiers": ["ctrl"] },
     "category": "Windowing"
   },
   {
-    "phrase": [["desk", "desktop"], "9"],
+    "pattern": [["desk", "desktop"], "9"],
     "action": { "type": "input.shortcut", "code": 25, "modifiers": ["ctrl"] },
     "category": "Windowing"
   }
