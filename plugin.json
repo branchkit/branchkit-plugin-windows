@@ -14,6 +14,56 @@
     "voice_commands": "commands.json"
   },
   "action_prefix": "windows",
+  "action_types": {
+    "snap": {
+      "label": "Snap Window",
+      "fields": [
+        {
+          "key": "position",
+          "label": "Position",
+          "field_type": "enum",
+          "enum_values": ["left", "right", "maximize", "center", "next", "prev", "done"],
+          "required": true
+        }
+      ]
+    },
+    "move_to_space": {
+      "label": "Move Window to Space",
+      "fields": [
+        {
+          "key": "space",
+          "label": "Space Number",
+          "placeholder": "1",
+          "field_type": "string",
+          "required": true
+        }
+      ]
+    },
+    "tab_to_space": {
+      "label": "Move Browser Tab to Space",
+      "fields": [
+        {
+          "key": "space",
+          "label": "Space Number",
+          "placeholder": "1",
+          "field_type": "string",
+          "required": true
+        }
+      ]
+    },
+    "tab_to_window": {
+      "label": "Move Browser Tab to Window",
+      "fields": [
+        {
+          "key": "index",
+          "label": "Window Index",
+          "placeholder": "1",
+          "field_type": "string",
+          "required": true
+        }
+      ]
+    }
+  },
   "provides": {
     "tags": {
       "plugin.windows.snap_mode": {

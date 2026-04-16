@@ -10,17 +10,15 @@ var plugin *shared.Plugin
 
 // --- Per-action handlers ---
 //
-// Slot captures from voice commands (`<number>`, `<text>`) substitute into
-// action params via the matching engine's template syntax (`"space": "{0}"`),
-// which always produces strings. So integer-valued params are declared as
-// strings and parsed inside the handler with strconv.
-
-type snapParams struct {
-	Position string `json:"position"`
-}
+// Param structs (SnapParams, MoveToSpaceParams, …) live in actions_gen.go,
+// generated from plugin.json's action_types block. Slot captures from voice
+// commands (`<number>`, `<text>`) substitute into action params via the
+// matching engine's template syntax (`"space": "{0}"`) which always produces
+// strings — so integer-valued params stay typed as strings in the manifest
+// and are parsed inside the handler with strconv.
 
 func handleWindowsSnap(req *shared.OnActionRequest) (any, error) {
-	var p snapParams
+	var p SnapParams
 	if err := req.UnmarshalParams(&p); err != nil {
 		return nil, err
 	}
@@ -28,16 +26,12 @@ func handleWindowsSnap(req *shared.OnActionRequest) (any, error) {
 		shared.Logf("windows", "snap: missing position")
 		return nil, nil
 	}
-	handleSnap(req.ActiveWindowID, p.Position)
+	handleSnap(req.ActiveWindowID, string(p.Position))
 	return nil, nil
 }
 
-type spaceParams struct {
-	Space string `json:"space"`
-}
-
 func handleWindowsMoveToSpace(req *shared.OnActionRequest) (any, error) {
-	var p spaceParams
+	var p MoveToSpaceParams
 	if err := req.UnmarshalParams(&p); err != nil {
 		return nil, err
 	}
@@ -51,7 +45,7 @@ func handleWindowsMoveToSpace(req *shared.OnActionRequest) (any, error) {
 }
 
 func handleWindowsTabToSpace(req *shared.OnActionRequest) (any, error) {
-	var p spaceParams
+	var p TabToSpaceParams
 	if err := req.UnmarshalParams(&p); err != nil {
 		return nil, err
 	}
@@ -68,12 +62,8 @@ func handleWindowsTabToSpace(req *shared.OnActionRequest) (any, error) {
 	return nil, nil
 }
 
-type tabToWindowParams struct {
-	Index string `json:"index"`
-}
-
 func handleWindowsTabToWindow(req *shared.OnActionRequest) (any, error) {
-	var p tabToWindowParams
+	var p TabToWindowParams
 	if err := req.UnmarshalParams(&p); err != nil {
 		return nil, err
 	}
