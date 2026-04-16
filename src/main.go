@@ -1,12 +1,19 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/branchkit/plugin-sdk-go"
 )
 
 var plugin *shared.Plugin
 
 // --- Per-action handlers ---
+//
+// Slot captures from voice commands (`<number>`, `<text>`) substitute into
+// action params via the matching engine's template syntax (`"space": "{0}"`),
+// which always produces strings. So integer-valued params are declared as
+// strings and parsed inside the handler with strconv.
 
 type snapParams struct {
 	Position string `json:"position"`
@@ -26,90 +33,61 @@ func handleWindowsSnap(req *shared.OnActionRequest) (any, error) {
 }
 
 type spaceParams struct {
-	// JSON number, but template substitution can produce a string ("{0}" → "5").
-	// Accept both with json.Number on the receiving side.
-	Space int `json:"space"`
+	Space string `json:"space"`
 }
 
 func handleWindowsMoveToSpace(req *shared.OnActionRequest) (any, error) {
 	var p spaceParams
 	if err := req.UnmarshalParams(&p); err != nil {
-		// Fallback: template substitution can leave space as a string
-		var s struct{ Space string `json:"space"` }
-		if err2 := req.UnmarshalParams(&s); err2 == nil {
-			p.Space = atoiOr(s.Space, 0)
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
-	if p.Space < 1 || p.Space > 9 {
-		shared.Logf("windows", "move_to_space: invalid space: %d", p.Space)
+	space, err := strconv.Atoi(p.Space)
+	if err != nil || space < 1 || space > 9 {
+		shared.Logf("windows", "move_to_space: invalid space: %q", p.Space)
 		return nil, nil
 	}
-	handleMoveToSpace(req.ActiveWindowID, p.Space)
+	handleMoveToSpace(req.ActiveWindowID, space)
 	return nil, nil
 }
 
 func handleWindowsTabToSpace(req *shared.OnActionRequest) (any, error) {
 	var p spaceParams
 	if err := req.UnmarshalParams(&p); err != nil {
-		var s struct{ Space string `json:"space"` }
-		if err2 := req.UnmarshalParams(&s); err2 == nil {
-			p.Space = atoiOr(s.Space, 0)
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
-	if p.Space < 1 || p.Space > 9 {
-		shared.Logf("windows", "tab_to_space: invalid space: %d", p.Space)
+	space, err := strconv.Atoi(p.Space)
+	if err != nil || space < 1 || space > 9 {
+		shared.Logf("windows", "tab_to_space: invalid space: %q", p.Space)
 		return nil, nil
 	}
 	appID := ""
 	if req.ActiveApp != nil {
 		appID = *req.ActiveApp
 	}
-	handleMoveTabToSpace(p.Space, appID)
+	handleMoveTabToSpace(space, appID)
 	return nil, nil
 }
 
 type tabToWindowParams struct {
-	Index int `json:"index"`
+	Index string `json:"index"`
 }
 
 func handleWindowsTabToWindow(req *shared.OnActionRequest) (any, error) {
 	var p tabToWindowParams
 	if err := req.UnmarshalParams(&p); err != nil {
-		var s struct{ Index string `json:"index"` }
-		if err2 := req.UnmarshalParams(&s); err2 == nil {
-			p.Index = atoiOr(s.Index, 0)
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
-	if p.Index < 1 {
-		shared.Logf("windows", "tab_to_window: invalid index: %d", p.Index)
+	index, err := strconv.Atoi(p.Index)
+	if err != nil || index < 1 {
+		shared.Logf("windows", "tab_to_window: invalid index: %q", p.Index)
 		return nil, nil
 	}
 	appID := ""
 	if req.ActiveApp != nil {
 		appID = *req.ActiveApp
 	}
-	handleMoveTabToWindow(p.Index, appID)
+	handleMoveTabToWindow(index, appID)
 	return nil, nil
-}
-
-func atoiOr(s string, def int) int {
-	n := 0
-	for _, c := range s {
-		if c < '0' || c > '9' {
-			return def
-		}
-		n = n*10 + int(c-'0')
-	}
-	if s == "" {
-		return def
-	}
-	return n
 }
 
 func pushCommands(p *shared.Plugin) {
