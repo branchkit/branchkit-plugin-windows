@@ -1,107 +1,115 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"strconv"
-
 	"github.com/branchkit/plugin-sdk-go"
 )
 
 var plugin *shared.Plugin
 
-// --- Request/Response types ---
+// --- Per-action handlers ---
 
-type OnActionRequest struct {
-	Action         string                 `json:"action"`
-	ActiveApp      *string                `json:"active_app,omitempty"`
-	ActiveWindowID *string                `json:"active_window_id,omitempty"`
-	Params         map[string]interface{} `json:"params,omitempty"`
-	Args           []string               `json:"args,omitempty"`
+type snapParams struct {
+	Position string `json:"position"`
 }
 
-type OnActionResponse struct {
-	Result string `json:"result"` // "handled" or "pass"
-}
-
-// rpcHandler creates a HandlerFunc that unmarshals params into the given request type,
-// calls the handler, and returns the result.
-func rpcHandler[Req any](fn func(*Req) (any, error)) shared.HandlerFunc {
-	return func(params json.RawMessage) (any, error) {
-		var req Req
-		if len(params) > 0 {
-			if err := json.Unmarshal(params, &req); err != nil {
-				return nil, fmt.Errorf("bad params: %w", err)
-			}
-		}
-		return fn(&req)
+func handleWindowsSnap(req *shared.OnActionRequest) (any, error) {
+	var p snapParams
+	if err := req.UnmarshalParams(&p); err != nil {
+		return nil, err
 	}
+	if p.Position == "" {
+		shared.Logf("windows", "snap: missing position")
+		return nil, nil
+	}
+	handleSnap(req.ActiveWindowID, p.Position)
+	return nil, nil
 }
 
-func handleOnAction(req *OnActionRequest) (any, error) {
-	p := req.Params
-	args := req.Args
-	shared.Logf("windows", "action: %s (params: %v, args: %v)", req.Action, p, args)
+type spaceParams struct {
+	// JSON number, but template substitution can produce a string ("{0}" → "5").
+	// Accept both with json.Number on the receiving side.
+	Space int `json:"space"`
+}
 
-	switch req.Action {
-	case "windows.snap":
-		position, _ := p["position"].(string)
-		if position == "" {
-			shared.Logf("windows", "snap: missing position")
-			break
+func handleWindowsMoveToSpace(req *shared.OnActionRequest) (any, error) {
+	var p spaceParams
+	if err := req.UnmarshalParams(&p); err != nil {
+		// Fallback: template substitution can leave space as a string
+		var s struct{ Space string `json:"space"` }
+		if err2 := req.UnmarshalParams(&s); err2 == nil {
+			p.Space = atoiOr(s.Space, 0)
+		} else {
+			return nil, err
 		}
-		handleSnap(req.ActiveWindowID, position)
-
-	case "windows.move_to_space":
-		if len(args) < 1 {
-			shared.Logf("windows", "move_to_space: missing space number")
-			break
-		}
-		space, err := strconv.Atoi(args[0])
-		if err != nil || space < 1 || space > 9 {
-			shared.Logf("windows", "move_to_space: invalid space: %s", args[0])
-			break
-		}
-		handleMoveToSpace(req.ActiveWindowID, space)
-
-	case "windows.tab_to_space":
-		if len(args) < 1 {
-			shared.Logf("windows", "tab_to_space: missing space number")
-			break
-		}
-		space, err := strconv.Atoi(args[0])
-		if err != nil || space < 1 || space > 9 {
-			shared.Logf("windows", "tab_to_space: invalid space: %s", args[0])
-			break
-		}
-		appID := ""
-		if req.ActiveApp != nil {
-			appID = *req.ActiveApp
-		}
-		handleMoveTabToSpace(space, appID)
-
-	case "windows.tab_to_window":
-		if len(args) < 1 {
-			shared.Logf("windows", "tab_to_window: missing window index")
-			break
-		}
-		idx, err := strconv.Atoi(args[0])
-		if err != nil || idx < 1 {
-			shared.Logf("windows", "tab_to_window: invalid index: %s", args[0])
-			break
-		}
-		appID := ""
-		if req.ActiveApp != nil {
-			appID = *req.ActiveApp
-		}
-		handleMoveTabToWindow(idx, appID)
-
-	default:
-		shared.Logf("windows", "unknown action: %s", req.Action)
-		return OnActionResponse{Result: "pass"}, nil
 	}
+	if p.Space < 1 || p.Space > 9 {
+		shared.Logf("windows", "move_to_space: invalid space: %d", p.Space)
+		return nil, nil
+	}
+	handleMoveToSpace(req.ActiveWindowID, p.Space)
+	return nil, nil
+}
 
-	return OnActionResponse{Result: "handled"}, nil
+func handleWindowsTabToSpace(req *shared.OnActionRequest) (any, error) {
+	var p spaceParams
+	if err := req.UnmarshalParams(&p); err != nil {
+		var s struct{ Space string `json:"space"` }
+		if err2 := req.UnmarshalParams(&s); err2 == nil {
+			p.Space = atoiOr(s.Space, 0)
+		} else {
+			return nil, err
+		}
+	}
+	if p.Space < 1 || p.Space > 9 {
+		shared.Logf("windows", "tab_to_space: invalid space: %d", p.Space)
+		return nil, nil
+	}
+	appID := ""
+	if req.ActiveApp != nil {
+		appID = *req.ActiveApp
+	}
+	handleMoveTabToSpace(p.Space, appID)
+	return nil, nil
+}
+
+type tabToWindowParams struct {
+	Index int `json:"index"`
+}
+
+func handleWindowsTabToWindow(req *shared.OnActionRequest) (any, error) {
+	var p tabToWindowParams
+	if err := req.UnmarshalParams(&p); err != nil {
+		var s struct{ Index string `json:"index"` }
+		if err2 := req.UnmarshalParams(&s); err2 == nil {
+			p.Index = atoiOr(s.Index, 0)
+		} else {
+			return nil, err
+		}
+	}
+	if p.Index < 1 {
+		shared.Logf("windows", "tab_to_window: invalid index: %d", p.Index)
+		return nil, nil
+	}
+	appID := ""
+	if req.ActiveApp != nil {
+		appID = *req.ActiveApp
+	}
+	handleMoveTabToWindow(p.Index, appID)
+	return nil, nil
+}
+
+func atoiOr(s string, def int) int {
+	n := 0
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return def
+		}
+		n = n*10 + int(c-'0')
+	}
+	if s == "" {
+		return def
+	}
+	return n
 }
 
 func pushCommands(p *shared.Plugin) {
@@ -117,8 +125,11 @@ func main() {
 	plugin = shared.NewPlugin()
 	pushCommands(plugin)
 
-	plugin.Handle("on_action", rpcHandler(handleOnAction))
-	plugin.Handle("render_settings", rpcHandler(handleRenderSettingsRPC))
+	plugin.HandleAction("windows.snap", handleWindowsSnap)
+	plugin.HandleAction("windows.move_to_space", handleWindowsMoveToSpace)
+	plugin.HandleAction("windows.tab_to_space", handleWindowsTabToSpace)
+	plugin.HandleAction("windows.tab_to_window", handleWindowsTabToWindow)
+	shared.HandleTyped(plugin, "render_settings", handleRenderSettingsRPC)
 
 	plugin.Run()
 }

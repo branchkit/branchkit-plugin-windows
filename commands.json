@@ -99,17 +99,17 @@
 
   {
     "pattern": [["send", "throw", "move"], "desk", "<number>"],
-    "action": { "type": "windows.move_to_space" },
+    "action": { "type": "windows.move_to_space", "space": "{0}" },
     "category": "Windowing"
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "desk", "<number>"],
-    "action": { "type": "windows.tab_to_space" },
+    "action": { "type": "windows.tab_to_space", "space": "{0}" },
     "category": "Windowing"
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "window", "<number>"],
-    "action": { "type": "windows.tab_to_window" },
+    "action": { "type": "windows.tab_to_window", "index": "{0}" },
     "category": "Windowing"
   },
 
