@@ -10,7 +10,7 @@
   "description": "Native window management \u2014 snap, move to space, switch desktops, browser tab operations. Uses built-in OS primitives without a tiling system.",
   "author": "BranchKit",
   "run": "./windows-plugin",
-  "store_data": {
+  "collection_data": {
     "voice_commands": "commands.json"
   },
   "action_prefix": "windows",
