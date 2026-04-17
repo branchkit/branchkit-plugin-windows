@@ -80,18 +80,8 @@ func handleWindowsTabToWindow(req *shared.OnActionRequest) (any, error) {
 	return nil, nil
 }
 
-func pushCommands(p *shared.Plugin) {
-	count, err := shared.PushCommands(p)
-	if err != nil {
-		shared.Logf("windows", "%v", err)
-		return
-	}
-	shared.Logf("windows", "Registered %d command variants", count)
-}
-
 func main() {
 	plugin = shared.NewPlugin()
-	pushCommands(plugin)
 
 	plugin.HandleAction("windows.snap", handleWindowsSnap)
 	plugin.HandleAction("windows.move_to_space", handleWindowsMoveToSpace)
