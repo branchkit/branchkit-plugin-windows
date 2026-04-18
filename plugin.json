@@ -82,6 +82,11 @@
       }
     ]
   },
+  "consumes": {
+    "collections": [
+      "number"
+    ]
+  },
   "implements": {
     "on_action": true,
     "settings_tabs": [
