@@ -10,6 +10,15 @@ import (
 	"github.com/branchkit/plugin-sdk-go"
 )
 
+// Timing constants for Mission Control space transitions.
+// These values account for macOS animation latency between operations.
+const (
+	cursorSettleDelay   = 50 * time.Millisecond  // wait for cursor warp to register
+	mouseDownHoldDelay  = 25 * time.Millisecond  // hold before space switch keystroke
+	spaceTransitDelay   = 200 * time.Millisecond // wait for Mission Control space animation
+	tabDeliveryDelay    = 600 * time.Millisecond // wait for space switch before tab delivery
+)
+
 // spaceCodes maps Mission Control space numbers (1-9) to macOS virtual keycodes.
 var spaceCodes = map[int]int{
 	1: 18, 2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25,
@@ -86,17 +95,17 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 		shared.Logf("windows","move-to-space: warp cursor: %v", err)
 		return
 	}
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(cursorSettleDelay)
 
 	// Mouse down
 	dispatchAction(json.RawMessage(`{"type":"mouse_down","button":"left"}`))
-	time.Sleep(25 * time.Millisecond)
+	time.Sleep(mouseDownHoldDelay)
 
 	// Ctrl + space number
 	dispatchAction(json.RawMessage(fmt.Sprintf(
 		`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, code)))
 
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(spaceTransitDelay)
 
 	// Mouse up
 	dispatchAction(json.RawMessage(`{"type":"mouse_up","button":"left"}`))
@@ -154,7 +163,7 @@ func handleMoveTabToSpace(space int, appID string) {
 	dispatchAction(json.RawMessage(fmt.Sprintf(
 		`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, code)))
 
-	time.Sleep(600 * time.Millisecond)
+	time.Sleep(tabDeliveryDelay)
 
 	// Deliver tab to target space
 	var deliverScript string
