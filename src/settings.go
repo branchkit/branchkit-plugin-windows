@@ -1,22 +1,9 @@
 package main
 
 import (
-	"bytes"
-	"context"
-
-	"github.com/a-h/templ"
 	"github.com/branchkit/plugin-sdk-go"
+	toolkit "github.com/branchkit/plugin-toolkit-go"
 )
-
-// renderTempl renders a templ component to an HTML string.
-func renderTempl(c templ.Component) string {
-	var buf bytes.Buffer
-	if err := c.Render(context.Background(), &buf); err != nil {
-		shared.Logf("windows", "settings: templ render error: %v", err)
-		return ""
-	}
-	return buf.String()
-}
 
 type commandRow struct {
 	Phrase      string
@@ -43,31 +30,17 @@ func renderSettings(search string) string {
 	if search != "" {
 		var filtered []commandRow
 		for _, c := range cmds {
-			if containsFold(c.Phrase, search) || containsFold(c.Description, search) {
+			if toolkit.MatchesSearch(search, c.Phrase, c.Description) {
 				filtered = append(filtered, c)
 			}
 		}
 		cmds = filtered
 	}
 
-	return renderTempl(WindowsSettings(cmds))
+	return toolkit.RenderTempl("windows", WindowsSettings(cmds))
 }
 
-type RenderSettingsRequest struct {
-	TabKey string `json:"tab_key"`
-	Search string `json:"search"`
-}
-
-func handleRenderSettingsRPC(req *RenderSettingsRequest) (any, error) {
+func handleRenderSettingsRPC(req *shared.RenderSettingsRequest) (any, error) {
 	html := renderSettings(req.Search)
 	return shared.RenderSettingsResponse{HTML: html}, nil
-}
-
-// containsFold does a case-insensitive substring match.
-func containsFold(s, substr string) bool {
-	return len(s) >= len(substr) && func() bool {
-		sl := bytes.ToLower([]byte(s))
-		sub := bytes.ToLower([]byte(substr))
-		return bytes.Contains(sl, sub)
-	}()
 }

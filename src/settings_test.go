@@ -1,10 +1,14 @@
 package main
 
-import "testing"
+import (
+	"testing"
 
-func TestContainsFold(t *testing.T) {
+	toolkit "github.com/branchkit/plugin-toolkit-go"
+)
+
+func TestMatchesSearch(t *testing.T) {
 	tests := []struct {
-		s, substr string
+		s, search string
 		want      bool
 	}{
 		{"Snap window to left", "snap", true},
@@ -15,9 +19,9 @@ func TestContainsFold(t *testing.T) {
 		{"anything", "", true},
 	}
 	for _, tt := range tests {
-		got := containsFold(tt.s, tt.substr)
+		got := toolkit.MatchesSearch(tt.search, tt.s)
 		if got != tt.want {
-			t.Errorf("containsFold(%q, %q) = %v, want %v", tt.s, tt.substr, got, tt.want)
+			t.Errorf("MatchesSearch(%q, %q) = %v, want %v", tt.search, tt.s, got, tt.want)
 		}
 	}
 }
@@ -28,10 +32,10 @@ func TestRenderSettingsNoFilter(t *testing.T) {
 		t.Fatal("expected non-empty HTML")
 	}
 	// Should contain some known commands
-	if !containsFold(html, "snap left") {
+	if !toolkit.MatchesSearch("snap left", html) {
 		t.Error("expected 'snap left' in output")
 	}
-	if !containsFold(html, "Mission Control") {
+	if !toolkit.MatchesSearch("Mission Control", html) {
 		t.Error("expected 'Mission Control' in output")
 	}
 }
@@ -42,11 +46,11 @@ func TestRenderSettingsWithFilter(t *testing.T) {
 		t.Fatal("expected non-empty HTML")
 	}
 	// Should contain tab commands
-	if !containsFold(html, "tab") {
+	if !toolkit.MatchesSearch("tab", html) {
 		t.Error("expected 'tab' in filtered output")
 	}
 	// Should NOT contain snap left (doesn't match "tab")
-	if containsFold(html, "snap left") {
+	if toolkit.MatchesSearch("snap left", html) {
 		t.Error("'snap left' should be filtered out by 'tab' search")
 	}
 }
