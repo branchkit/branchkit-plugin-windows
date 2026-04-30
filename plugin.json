@@ -72,7 +72,10 @@
         "writers": "anyone_who_declares",
         "lifecycle": {
           "type": "clear_on_event",
-          "event": "_platform.input.session_ended"
+          "events": [
+            "_platform.input.session_ended",
+            "_platform.discovery.closed"
+          ]
         },
         "feeds_matching": {
           "type": "as_gates",
