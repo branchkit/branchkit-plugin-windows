@@ -65,22 +65,22 @@
     }
   },
   "provides": {
-    "tags": {
+    "collections": {
       "plugin.windows.snap_mode": {
-        "label": "Snap Mode",
-        "description": "Snap mode active \u2014 say direction words to snap windows without repeating 'snap'"
-      }
-    },
-    "tag_namespaces": [
-      {
-        "prefix": "plugin.windows.snap_mode",
-        "lifecycle": "transient",
-        "clear_on": "_platform.input.session_ended",
-        "scoped": true,
-        "access": "open",
+        "preset": "tag",
+        "fields": [],
+        "writers": "anyone_who_declares",
+        "lifecycle": {
+          "type": "clear_on_event",
+          "event": "_platform.input.session_ended"
+        },
+        "feeds_matching": {
+          "type": "as_gates",
+          "scoped": true
+        },
         "description": "Snap mode \u2014 direction words snap windows without repeating 'snap'."
       }
-    ]
+    }
   },
   "consumes": {
     "collections": [
