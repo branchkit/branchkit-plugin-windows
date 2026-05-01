@@ -77,6 +77,7 @@
             "_platform.discovery.closed"
           ]
         },
+        "clear_on_unrelated_command": true,
         "feeds_matching": {
           "type": "as_gates",
           "scoped": true
