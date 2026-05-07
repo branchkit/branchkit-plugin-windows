@@ -1,7 +1,7 @@
 {
   "id": "windows",
   "name": "Windows",
-  "capabilities": [
+  "privileges": [
     "windows",
     "input",
     "shell"
