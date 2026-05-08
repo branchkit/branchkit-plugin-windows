@@ -78,6 +78,7 @@
           ]
         },
         "clear_on_unrelated_command": true,
+        "exclusive": true,
         "feeds_matching": {
           "type": "as_gates",
           "scoped": true
