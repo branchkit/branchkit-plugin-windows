@@ -13,7 +13,7 @@
   {
     "pattern": ["snap"],
     "action": { "type": "windows.snap", "position": "mode" },
-    "category": "Windowing",
+    "category": "Snap Mode",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
 
@@ -86,7 +86,7 @@
   {
     "pattern": [["desk", "desktop"]],
     "action": { "type": "windows.desk_mode" },
-    "category": "Windowing",
+    "category": "Desk Mode",
     "sets_tags": ["plugin.windows.desk_mode"]
   },
 
