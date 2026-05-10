@@ -11,38 +11,8 @@
   },
 
   {
-    "pattern": ["snap", "left"],
-    "action": { "type": "windows.snap", "position": "left" },
-    "category": "Windowing",
-    "sets_tags": ["plugin.windows.snap_mode"]
-  },
-  {
-    "pattern": ["snap", "right"],
-    "action": { "type": "windows.snap", "position": "right" },
-    "category": "Windowing",
-    "sets_tags": ["plugin.windows.snap_mode"]
-  },
-  {
-    "pattern": ["snap", ["full", "maximize"]],
-    "action": { "type": "windows.snap", "position": "maximize" },
-    "category": "Windowing",
-    "sets_tags": ["plugin.windows.snap_mode"]
-  },
-  {
-    "pattern": ["snap", "center"],
-    "action": { "type": "windows.snap", "position": "center" },
-    "category": "Windowing",
-    "sets_tags": ["plugin.windows.snap_mode"]
-  },
-  {
-    "pattern": ["snap", "next"],
-    "action": { "type": "windows.snap", "position": "next" },
-    "category": "Windowing",
-    "sets_tags": ["plugin.windows.snap_mode"]
-  },
-  {
-    "pattern": ["snap", "previous"],
-    "action": { "type": "windows.snap", "position": "prev" },
+    "pattern": ["snap"],
+    "action": { "type": "windows.snap", "position": "mode" },
     "category": "Windowing",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
