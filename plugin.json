@@ -84,6 +84,25 @@
           "scoped": true
         },
         "description": "Snap mode \u2014 direction words snap windows without repeating 'snap'."
+      },
+      "plugin.windows.desk_mode": {
+        "preset": "tag",
+        "fields": [],
+        "writers": "anyone_who_declares",
+        "lifecycle": {
+          "type": "clear_on_event",
+          "events": [
+            "_platform.input.session_ended",
+            "_platform.discovery.closed"
+          ]
+        },
+        "clear_on_unrelated_command": true,
+        "exclusive": true,
+        "feeds_matching": {
+          "type": "as_gates",
+          "scoped": true
+        },
+        "description": "Desk mode \u2014 number words switch desktops without repeating 'desk'."
       }
     }
   },

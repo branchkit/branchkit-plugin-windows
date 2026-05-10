@@ -84,48 +84,24 @@
   },
 
   {
-    "pattern": [["desk", "desktop"], "1"],
-    "action": { "type": "input.shortcut", "code": 18, "modifiers": ["ctrl"] },
-    "category": "Windowing"
+    "pattern": [["desk", "desktop"]],
+    "action": { "type": "windows.desk_mode" },
+    "category": "Windowing",
+    "sets_tags": ["plugin.windows.desk_mode"]
+  },
+
+  {
+    "pattern": ["<number>"],
+    "action": { "type": "windows.desk_switch", "space": "{0}" },
+    "category": "Desk Mode",
+    "requires_tags": ["plugin.windows.desk_mode"],
+    "clears_tags": ["plugin.windows.desk_mode"]
   },
   {
-    "pattern": [["desk", "desktop"], "2"],
-    "action": { "type": "input.shortcut", "code": 19, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "3"],
-    "action": { "type": "input.shortcut", "code": 20, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "4"],
-    "action": { "type": "input.shortcut", "code": 21, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "5"],
-    "action": { "type": "input.shortcut", "code": 23, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "6"],
-    "action": { "type": "input.shortcut", "code": 22, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "7"],
-    "action": { "type": "input.shortcut", "code": 26, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "8"],
-    "action": { "type": "input.shortcut", "code": 28, "modifiers": ["ctrl"] },
-    "category": "Windowing"
-  },
-  {
-    "pattern": [["desk", "desktop"], "9"],
-    "action": { "type": "input.shortcut", "code": 25, "modifiers": ["ctrl"] },
-    "category": "Windowing"
+    "pattern": ["done"],
+    "action": { "type": "windows.desk_mode_done" },
+    "category": "Desk Mode",
+    "requires_tags": ["plugin.windows.desk_mode"],
+    "clears_tags": ["plugin.windows.desk_mode"]
   }
 ]

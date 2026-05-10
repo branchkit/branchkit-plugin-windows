@@ -15,6 +15,29 @@ import (
 // strings — so integer-valued params stay typed as strings in the manifest
 // and are parsed inside the handler with strconv.
 
+func noopAction(_ *shared.OnActionRequest) (any, error) { return nil, nil }
+
+func handleDeskSwitch(req *shared.OnActionRequest) (any, error) {
+	var p struct {
+		Space string `json:"space"`
+	}
+	if err := req.UnmarshalParams(&p); err != nil {
+		return nil, err
+	}
+	space, err := strconv.Atoi(p.Space)
+	if err != nil || space < 1 || space > 9 {
+		shared.Logf("windows", "desk_switch: invalid space: %q", p.Space)
+		return nil, nil
+	}
+	code, ok := spaceCodes[space]
+	if !ok {
+		shared.Logf("windows", "desk_switch: no keycode for space %d", space)
+		return nil, nil
+	}
+	plugin.Call("input.press_key", map[string]any{"code": code, "modifiers": []string{"ctrl"}}, nil)
+	return nil, nil
+}
+
 func handleWindowsSnap(req *shared.OnActionRequest) (any, error) {
 	var p SnapParams
 	if err := req.UnmarshalParams(&p); err != nil {
