@@ -68,8 +68,8 @@
     "collections": {
       "plugin.windows.snap_mode": {
         "preset": "tag",
-        "fields": [],
         "writers": "anyone_who_declares",
+        "fields": [],
         "lifecycle": {
           "type": "clear_on_event",
           "events": [
@@ -87,8 +87,8 @@
       },
       "plugin.windows.desk_mode": {
         "preset": "tag",
-        "fields": [],
         "writers": "anyone_who_declares",
+        "fields": [],
         "lifecycle": {
           "type": "clear_on_event",
           "events": [
