@@ -22,8 +22,8 @@
           "key": "position",
           "label": "Position",
           "field_type": "enum",
-          "enum_values": ["left", "right", "maximize", "center", "next", "prev", "done"],
-          "required": true
+          "enum_values": ["left", "right", "maximize", "center", "next", "prev"],
+          "required": false
         }
       ]
     },

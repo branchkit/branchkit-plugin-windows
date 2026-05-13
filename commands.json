@@ -12,7 +12,6 @@
 
   {
     "pattern": ["snap"],
-    "action": { "type": "windows.snap", "position": "mode" },
     "category": "Snap Mode",
     "sets_tags": ["plugin.windows.snap_mode"]
   },
@@ -61,7 +60,6 @@
   },
   {
     "pattern": ["done"],
-    "action": { "type": "windows.snap", "position": "done" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
     "clears_tags": ["plugin.windows.snap_mode"]
@@ -85,7 +83,6 @@
 
   {
     "pattern": [["desk", "desktop"]],
-    "action": { "type": "windows.desk_mode" },
     "category": "Desk Mode",
     "sets_tags": ["plugin.windows.desk_mode"]
   },
@@ -99,7 +96,6 @@
   },
   {
     "pattern": ["done"],
-    "action": { "type": "windows.desk_mode_done" },
     "category": "Desk Mode",
     "requires_tags": ["plugin.windows.desk_mode"],
     "clears_tags": ["plugin.windows.desk_mode"]

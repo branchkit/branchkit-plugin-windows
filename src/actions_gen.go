@@ -18,12 +18,11 @@ const (
 	SnapPositionCenter SnapPosition = "center"
 	SnapPositionNext SnapPosition = "next"
 	SnapPositionPrev SnapPosition = "prev"
-	SnapPositionDone SnapPosition = "done"
 )
 
 // SnapParams is the params shape for action "windows.snap (Snap Window)".
 type SnapParams struct {
-	Position SnapPosition `json:"position"`
+	Position *SnapPosition `json:"position,omitempty"`
 }
 
 // TabToSpaceParams is the params shape for action "windows.tab_to_space (Move Browser Tab to Space)".

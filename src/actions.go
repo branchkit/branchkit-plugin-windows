@@ -15,8 +15,6 @@ import (
 // strings — so integer-valued params stay typed as strings in the manifest
 // and are parsed inside the handler with strconv.
 
-func noopAction(_ *shared.OnActionRequest) (any, error) { return nil, nil }
-
 func handleDeskSwitch(req *shared.OnActionRequest) (any, error) {
 	var p struct {
 		Space string `json:"space"`
@@ -43,11 +41,10 @@ func handleWindowsSnap(req *shared.OnActionRequest) (any, error) {
 	if err := req.UnmarshalParams(&p); err != nil {
 		return nil, err
 	}
-	if p.Position == "" {
-		shared.Logf("windows", "snap: missing position")
+	if p.Position == nil {
 		return nil, nil
 	}
-	handleSnap(req.ActiveWindowID, string(p.Position))
+	handleSnap(req.ActiveWindowID, string(*p.Position))
 	return nil, nil
 }
 
