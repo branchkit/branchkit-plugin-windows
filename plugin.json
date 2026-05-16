@@ -69,7 +69,7 @@
     "collections": {
       "plugin.windows.snap_mode": {
         "preset": "tag",
-        "writers": "anyone_who_declares",
+        "writers": "platform_only",
         "merge": "collect",
         "fields": [],
         "lifecycle": {
@@ -89,7 +89,7 @@
       },
       "plugin.windows.desk_mode": {
         "preset": "tag",
-        "writers": "anyone_who_declares",
+        "writers": "platform_only",
         "merge": "collect",
         "fields": [],
         "lifecycle": {
