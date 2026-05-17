@@ -58,12 +58,6 @@
     "requires_tags": ["plugin.windows.snap_mode"],
     "sets_tags": ["plugin.windows.snap_mode"]
   },
-  {
-    "pattern": ["done"],
-    "category": "Snap Mode",
-    "requires_tags": ["plugin.windows.snap_mode"],
-    "clears_tags": ["plugin.windows.snap_mode"]
-  },
 
   {
     "pattern": [["send", "throw", "move"], "desk", "<number>"],
@@ -94,10 +88,4 @@
     "requires_tags": ["plugin.windows.desk_mode"],
     "sets_tags": ["plugin.windows.desk_mode"]
   },
-  {
-    "pattern": ["done"],
-    "category": "Desk Mode",
-    "requires_tags": ["plugin.windows.desk_mode"],
-    "clears_tags": ["plugin.windows.desk_mode"]
-  }
 ]
