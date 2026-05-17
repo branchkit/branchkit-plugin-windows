@@ -87,5 +87,5 @@
     "category": "Desk Mode",
     "requires_tags": ["plugin.windows.desk_mode"],
     "sets_tags": ["plugin.windows.desk_mode"]
-  },
+  }
 ]
