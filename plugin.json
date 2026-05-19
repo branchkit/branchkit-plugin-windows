@@ -75,8 +75,7 @@
         "lifecycle": {
           "type": "clear_on_event",
           "events": [
-            "_platform.input.session_ended",
-            "_platform.discovery.closed"
+            "_platform.input.session_boundary"
           ]
         },
         "clear_on_unrelated_command": true,
@@ -95,8 +94,7 @@
         "lifecycle": {
           "type": "clear_on_event",
           "events": [
-            "_platform.input.session_ended",
-            "_platform.discovery.closed"
+            "_platform.input.session_boundary"
           ]
         },
         "clear_on_unrelated_command": true,
