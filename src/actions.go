@@ -11,7 +11,7 @@ import (
 // Param structs (SnapParams, MoveToSpaceParams, …) live in actions_gen.go,
 // generated from plugin.json's action_types block. Slot captures from voice
 // commands (`<number>`, `<text>`) substitute into action params via the
-// matching engine's template syntax (`"space": "{0}"`) which always produces
+// matching engine's template syntax (`"space": "{number}"`) which always produces
 // strings — so integer-valued params stay typed as strings in the manifest
 // and are parsed inside the handler with strconv.
 

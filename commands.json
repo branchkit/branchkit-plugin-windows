@@ -61,17 +61,17 @@
 
   {
     "pattern": [["send", "throw", "move"], "desk", "<number>"],
-    "action": { "type": "windows.move_to_space", "space": "{0}" },
+    "action": { "type": "windows.move_to_space", "space": "{number}" },
     "category": "Windowing"
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "desk", "<number>"],
-    "action": { "type": "windows.tab_to_space", "space": "{0}" },
+    "action": { "type": "windows.tab_to_space", "space": "{number}" },
     "category": "Windowing"
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "window", "<number>"],
-    "action": { "type": "windows.tab_to_window", "index": "{0}" },
+    "action": { "type": "windows.tab_to_window", "index": "{number}" },
     "category": "Windowing"
   },
 
@@ -83,7 +83,7 @@
 
   {
     "pattern": ["<number>"],
-    "action": { "type": "windows.desk_switch", "space": "{0}" },
+    "action": { "type": "windows.desk_switch", "space": "{number}" },
     "category": "Desk Mode",
     "requires_tags": ["plugin.windows.desk_mode"],
     "sets_tags": ["plugin.windows.desk_mode"]
