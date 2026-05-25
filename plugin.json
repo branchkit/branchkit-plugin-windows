@@ -79,7 +79,7 @@
           ]
         },
         "clear_on_unrelated_command": true,
-        "protection_scope": "all",
+        "exclusive": true,
         "feeds_matching": {
           "type": "as_gates",
           "scoped": true
@@ -98,7 +98,7 @@
           ]
         },
         "clear_on_unrelated_command": true,
-        "protection_scope": "all",
+        "exclusive": true,
         "feeds_matching": {
           "type": "as_gates",
           "scoped": true
