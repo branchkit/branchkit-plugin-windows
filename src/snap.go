@@ -2,6 +2,7 @@ package main
 
 import (
 	"math"
+	"time"
 
 	"github.com/branchkit/plugin-sdk-go"
 )
@@ -10,6 +11,7 @@ const menuBarHeight = 25
 
 // handleSnap calculates snap geometry and applies it via batch-set-frames.
 func handleSnap(activeWindowID *string, direction string) {
+	start := time.Now()
 	var wm shared.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
 		shared.Logf("windows", "snap: failed to get world model: %v", err)
@@ -78,7 +80,7 @@ func handleSnap(activeWindowID *string, direction string) {
 	if err := plugin.Call("native.batch_set_frames", batchReq, nil); err != nil {
 		shared.Logf("windows", "snap: batch-set-frames error: %v", err)
 	} else {
-		shared.Logf("windows", "snap: batch-set-frames succeeded")
+		shared.Logf("windows", "snap: batch-set-frames succeeded (applied in %dms)", time.Since(start).Milliseconds())
 	}
 }
 
