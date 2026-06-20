@@ -2,18 +2,21 @@
   {
     "pattern": [["mission", "show windows", "overview"]],
     "action": { "type": "input.shortcut", "code": 126, "modifiers": ["ctrl"] },
-    "category": "Windowing"
+    "category": "Windowing",
+    "description": "Open Mission Control to see all windows."
   },
   {
     "pattern": ["next", "window"],
     "action": { "type": "input.shortcut", "code": 50, "modifiers": ["cmd"] },
-    "category": "Windowing"
+    "category": "Windowing",
+    "description": "Cycle to the next window of the current app."
   },
 
   {
     "pattern": ["snap"],
     "category": "Snap Mode",
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Enter snap mode — then say a direction to position the window."
   },
 
   {
@@ -21,64 +24,74 @@
     "action": { "type": "windows.snap", "position": "left" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Snap the window to the left half (snap mode)."
   },
   {
     "pattern": ["right"],
     "action": { "type": "windows.snap", "position": "right" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Snap the window to the right half (snap mode)."
   },
   {
     "pattern": [["full", "maximize"]],
     "action": { "type": "windows.snap", "position": "maximize" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Maximize the window to fill the screen (snap mode)."
   },
   {
     "pattern": ["center"],
     "action": { "type": "windows.snap", "position": "center" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Center the window on screen (snap mode)."
   },
   {
     "pattern": ["next"],
     "action": { "type": "windows.snap", "position": "next" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Snap to the next position in the cycle (snap mode)."
   },
   {
     "pattern": ["previous"],
     "action": { "type": "windows.snap", "position": "prev" },
     "category": "Snap Mode",
     "requires_tags": ["plugin.windows.snap_mode"],
-    "sets_tags": ["plugin.windows.snap_mode"]
+    "sets_tags": ["plugin.windows.snap_mode"],
+    "description": "Snap to the previous position in the cycle (snap mode)."
   },
 
   {
     "pattern": [["send", "throw", "move"], "desk", "<number>"],
     "action": { "type": "windows.move_to_space", "space": "{number}" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "description": "Move the current window to another desktop (space)."
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "desk", "<number>"],
     "action": { "type": "windows.tab_to_space", "space": "{number}" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "description": "Move the current browser tab to another desktop (space)."
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "window", "<number>"],
     "action": { "type": "windows.tab_to_window", "index": "{number}" },
-    "category": "Windowing"
+    "category": "Windowing",
+    "description": "Move the current browser tab to another window."
   },
 
   {
     "pattern": [["desk", "desktop"]],
     "category": "Desk Mode",
-    "sets_tags": ["plugin.windows.desk_mode"]
+    "sets_tags": ["plugin.windows.desk_mode"],
+    "description": "Enter desk mode — then say a number to switch desktops."
   },
 
   {
@@ -86,6 +99,7 @@
     "action": { "type": "windows.desk_switch", "space": "{number}" },
     "category": "Desk Mode",
     "requires_tags": ["plugin.windows.desk_mode"],
-    "sets_tags": ["plugin.windows.desk_mode"]
+    "sets_tags": ["plugin.windows.desk_mode"],
+    "description": "Switch to the numbered desktop (desk mode)."
   }
 ]
