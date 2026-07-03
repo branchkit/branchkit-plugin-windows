@@ -16,6 +16,18 @@
   },
   "action_prefix": "windows",
   "action_types": {
+    "desk_switch": {
+      "label": "Switch Desktop",
+      "fields": [
+        {
+          "key": "space",
+          "label": "Space Number",
+          "placeholder": "1",
+          "field_type": "string",
+          "required": true
+        }
+      ]
+    },
     "snap": {
       "label": "Snap Window",
       "fields": [

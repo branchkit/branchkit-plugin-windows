@@ -3,6 +3,11 @@
 
 package main
 
+// DeskSwitchParams is the params shape for action "windows.desk_switch (Switch Desktop)".
+type DeskSwitchParams struct {
+	Space string `json:"space"`
+}
+
 // MoveToSpaceParams is the params shape for action "windows.move_to_space (Move Window to Space)".
 type MoveToSpaceParams struct {
 	Space string `json:"space"`
