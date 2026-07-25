@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -21,6 +22,7 @@ const (
 // hotkey (respecting remaps and auto-enabling disabled shortcuts) instead of
 // assuming Ctrl+N. Desktops 1-16.
 func switchToDesktop(desktop int) {
+	shared.Logf("windows", "switch_space → desktop %d", desktop)
 	if err := plugin.Call("native.switch_space", map[string]any{"space_id": desktop}, nil); err != nil {
 		shared.Logf("windows", "switch to desktop %d: %v", desktop, err)
 	}
@@ -36,36 +38,56 @@ func cursorPosition() (x, y int, ok bool) {
 }
 
 // originDesktopOrdinal returns the Mission Control desktop number (the Ctrl+N
-// index, counted across displays in managed-display order, matching
-// spaceCodes) of the active space containing the given window, or 0 when it
-// can't be determined. Used by the stay variant to hop back after delivery.
-func originDesktopOrdinal(winID string) int {
+// index, counted across displays in managed-display order, matching the
+// desk_switch convention) the user is looking at on the display containing
+// the given point — the desk to hop back to after a stay move.
+//
+// Derived from the display's ACTIVE space, deliberately NOT from
+// window↔space membership: the window being moved is by construction on the
+// user's current space (the drag grab requires it under the cursor), and a
+// freshly created window (the browser plugin's tab-to-desk pop path) can lag
+// CGS membership queries — the old membership-based derivation hopped the
+// user to the wrong desk (2026-07-25). Falls back to the first active user
+// space when no display contains the point. Returns 0 only when spaces can't
+// be listed.
+func originDesktopOrdinal(displays []shared.DisplayInfo, pointX, pointY int) int {
 	var spaces shared.NativeListSpacesResponse
 	if err := plugin.Call("native.list_spaces", nil, &spaces); err != nil {
 		shared.Logf("windows", "move-to-space: list spaces: %v", err)
 		return 0
 	}
-	ordinal := 0
+	displayID := 0
+	for _, d := range displays {
+		if pointX >= d.X && pointX < d.X+d.W && pointY >= d.Y && pointY < d.Y+d.H {
+			displayID = d.ID
+			break
+		}
+	}
+	ordinal, firstActive, matched := 0, 0, 0
+	var order []string
 	for _, s := range spaces.Spaces {
 		if s.SpaceType != "user" {
 			continue
 		}
 		ordinal++
+		order = append(order, fmt.Sprintf("%d:d%d:%v", s.SpaceID, s.DisplayID, s.IsActive))
 		if !s.IsActive {
 			continue
 		}
-		var res shared.NativeWindowsOnSpaceResponse
-		req := shared.NativeWindowsOnSpaceRequest{SpaceID: s.SpaceID}
-		if err := plugin.Call("native.windows_on_space", req, &res); err != nil {
-			continue
+		if firstActive == 0 {
+			firstActive = ordinal
 		}
-		for _, id := range res.WindowIds {
-			if id == winID {
-				return ordinal
-			}
+		if matched == 0 && s.DisplayID == displayID {
+			matched = ordinal
 		}
 	}
-	return 0
+	result := matched
+	if result == 0 {
+		result = firstActive
+	}
+	shared.Logf("windows", "move-to-space: origin desk=%d (window display=%d, spaces=%s)",
+		result, displayID, strings.Join(order, " "))
+	return result
 }
 
 // handleMoveToSpace moves the active window to the given Mission Control space
@@ -93,12 +115,14 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 		winID = *wm.ActiveWindowID
 	}
 
-	var winX, winY int
+	var winX, winY, winW, winH int
 	found := false
 	for _, w := range wm.Windows {
 		if w.ID == winID {
 			winX = w.X
 			winY = w.Y
+			winW = w.W
+			winH = w.H
 			found = true
 			break
 		}
@@ -133,7 +157,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	// we, riding along with it) are on the target space.
 	returnOrdinal := 0
 	if stay {
-		returnOrdinal = originDesktopOrdinal(winID)
+		returnOrdinal = originDesktopOrdinal(wm.Displays, winX+winW/2, winY+winH/2)
 		if returnOrdinal == 0 {
 			shared.Logf("windows", "move-to-space: stay requested but origin desktop unknown — will follow instead")
 		} else if returnOrdinal == space {
