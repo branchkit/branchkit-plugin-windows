@@ -22,18 +22,3 @@ func TestApplescriptAppName(t *testing.T) {
 	}
 }
 
-func TestSpaceCodes(t *testing.T) {
-	// Verify all 9 spaces have codes
-	for i := 1; i <= 9; i++ {
-		if _, ok := spaceCodes[i]; !ok {
-			t.Errorf("missing space code for space %d", i)
-		}
-	}
-	// Space 0 and 10 should not exist
-	if _, ok := spaceCodes[0]; ok {
-		t.Error("space 0 should not exist")
-	}
-	if _, ok := spaceCodes[10]; ok {
-		t.Error("space 10 should not exist")
-	}
-}

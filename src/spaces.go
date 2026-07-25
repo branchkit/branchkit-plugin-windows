@@ -19,9 +19,23 @@ const (
 	tabDeliveryDelay    = 600 * time.Millisecond // wait for space switch before tab delivery
 )
 
-// spaceCodes maps Mission Control space numbers (1-9) to macOS virtual keycodes.
-var spaceCodes = map[int]int{
-	1: 18, 2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25,
+// switchToDesktop switches to a Mission Control desktop by number via the
+// actuator, which resolves the user's own "Switch to Desktop N" symbolic
+// hotkey (respecting remaps and auto-enabling disabled shortcuts) instead of
+// assuming Ctrl+N. Desktops 1-16.
+func switchToDesktop(desktop int) {
+	if err := plugin.Call("native.switch_space", map[string]any{"space_id": desktop}, nil); err != nil {
+		shared.Logf("windows", "switch to desktop %d: %v", desktop, err)
+	}
+}
+
+// cursorPosition returns the current cursor location, or ok=false.
+func cursorPosition() (x, y int, ok bool) {
+	var info shared.NativeCursorInfoResponse
+	if err := plugin.Call("native.cursor_info", nil, &info); err != nil {
+		return 0, 0, false
+	}
+	return info.X, info.Y, true
 }
 
 // originDesktopOrdinal returns the Mission Control desktop number (the Ctrl+N
@@ -64,8 +78,7 @@ func originDesktopOrdinal(winID string) int {
 // move-without-switching APIs are dead on modern macOS — verified silent no-op
 // on Sequoia 2026-07-25 — so a visible round trip is the only non-SIP path).
 func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
-	code, ok := spaceCodes[space]
-	if !ok {
+	if space < 1 || space > 16 {
 		shared.Logf("windows","move-to-space: invalid space %d", space)
 		return
 	}
@@ -131,6 +144,10 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 		}
 	}
 
+	// Remember where the cursor was so the whole operation doesn't strand it
+	// on the moved window's title bar.
+	origCursorX, origCursorY, restoreCursor := cursorPosition()
+
 	// Click title bar area, hold, switch space, release
 	clickX := winX + 75
 	clickY := winY + 10
@@ -150,9 +167,9 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	dispatchAction(json.RawMessage(`{"type":"mouse_down","button":"left"}`))
 	time.Sleep(mouseDownHoldDelay)
 
-	// Ctrl + space number
-	dispatchAction(json.RawMessage(fmt.Sprintf(
-		`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, code)))
+	// Switch to the target desktop from under the held window (symbolic
+	// hotkey — respects the user's actual shortcut config)
+	switchToDesktop(space)
 
 	time.Sleep(spaceTransitDelay)
 
@@ -161,14 +178,16 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 
 	// Stay variant: hop back to the origin desktop once the drop has landed.
 	if returnOrdinal != 0 {
-		returnCode, ok := spaceCodes[returnOrdinal]
-		if !ok {
-			shared.Logf("windows", "move-to-space: no keycode for return desktop %d", returnOrdinal)
-			return
-		}
 		time.Sleep(spaceTransitDelay)
-		dispatchAction(json.RawMessage(fmt.Sprintf(
-			`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, returnCode)))
+		switchToDesktop(returnOrdinal)
+	}
+
+	if restoreCursor {
+		restoreReq := struct {
+			X int `json:"x"`
+			Y int `json:"y"`
+		}{X: origCursorX, Y: origCursorY}
+		_ = plugin.Call("native.warp_cursor", restoreReq, nil)
 	}
 }
 
@@ -178,8 +197,7 @@ func handleMoveTabToSpace(space int, appID string) {
 		shared.Logf("windows","tab-to-space: no app_id")
 		return
 	}
-	code, ok := spaceCodes[space]
-	if !ok {
+	if space < 1 || space > 16 {
 		shared.Logf("windows","tab-to-space: invalid space %d", space)
 		return
 	}
@@ -220,9 +238,8 @@ func handleMoveTabToSpace(space int, appID string) {
 		}
 	}
 
-	// Switch to target space
-	dispatchAction(json.RawMessage(fmt.Sprintf(
-		`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, code)))
+	// Switch to target space (symbolic hotkey)
+	switchToDesktop(space)
 
 	time.Sleep(tabDeliveryDelay)
 

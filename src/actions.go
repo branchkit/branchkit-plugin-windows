@@ -23,16 +23,14 @@ func handleDeskSwitch(req *shared.OnActionRequest) (any, error) {
 		return nil, err
 	}
 	space, err := strconv.Atoi(p.Space)
-	if err != nil || space < 1 || space > 9 {
+	if err != nil || space < 1 || space > 16 {
 		shared.Logf("windows", "desk_switch: invalid space: %q", p.Space)
 		return nil, nil
 	}
-	code, ok := spaceCodes[space]
-	if !ok {
-		shared.Logf("windows", "desk_switch: no keycode for space %d", space)
-		return nil, nil
-	}
-	plugin.Call("input.press_key", map[string]any{"code": code, "modifiers": []string{"ctrl"}}, nil)
+	// The actuator resolves the user's actual "Switch to Desktop N" symbolic
+	// hotkey (respects remaps, auto-enables disabled shortcuts) — no
+	// hardcoded Ctrl+N keycode map.
+	switchToDesktop(space)
 	return nil, nil
 }
 
