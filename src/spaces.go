@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -163,8 +162,11 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	}
 	time.Sleep(cursorSettleDelay)
 
-	// Mouse down
-	dispatchAction(json.RawMessage(`{"type":"mouse_down","button":"left"}`))
+	// Mouse down, then a zero-distance drag to latch the window onto the
+	// cursor — macOS only treats the window as grabbed once a dragged event
+	// follows the press (the Amethyst/Silica latch).
+	mouseButton("press")
+	mouseButton("drag")
 	time.Sleep(mouseDownHoldDelay)
 
 	// Switch to the target desktop from under the held window (symbolic
@@ -174,7 +176,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	time.Sleep(spaceTransitDelay)
 
 	// Mouse up
-	dispatchAction(json.RawMessage(`{"type":"mouse_up","button":"left"}`))
+	mouseButton("release")
 
 	// Stay variant: hop back to the origin desktop once the drop has landed.
 	if returnOrdinal != 0 {
@@ -310,11 +312,13 @@ func handleMoveTabToWindow(windowIndex int, appID string) {
 	}
 }
 
-// dispatchAction calls the actuator's dispatch RPC method with a raw action JSON.
-func dispatchAction(action json.RawMessage) {
-	req := shared.DispatchActionRequest{Action: action}
-	if err := plugin.Call("dispatch", req, nil); err != nil {
-		shared.Logf("windows","dispatch: %v", err)
+// mouseButton presses, releases, or drag-latches the left mouse button via
+// the input.mouse_button RPC. (The old raw `dispatch` route is denied to
+// plugin callers by the operation auth layer — the grab half of the drag
+// trick had been failing silently through it.)
+func mouseButton(direction string) {
+	if err := plugin.Call("input.mouse_button", map[string]any{"button": "left", "direction": direction}, nil); err != nil {
+		shared.Logf("windows", "mouse_button %s: %v", direction, err)
 	}
 }
 
