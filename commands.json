@@ -69,13 +69,13 @@
   },
 
   {
-    "pattern": ["blank", "desk", "<number>"],
+    "pattern": ["blank", "window", "desk", "<number>"],
     "action": { "type": "windows.move_to_space", "space": "{number}" },
     "category": "Windowing",
     "description": "Move the current window to another desktop and follow it there."
   },
   {
-    "pattern": ["stash", "desk", "<number>"],
+    "pattern": ["stash", "window", "desk", "<number>"],
     "action": { "type": "windows.move_to_space", "space": "{number}", "stay": true },
     "category": "Windowing",
     "description": "Move the current window to another desktop but stay here."
