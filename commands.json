@@ -95,14 +95,6 @@
   },
 
   {
-    "pattern": [["desk", "desktop"], "<number>"],
-    "action": { "type": "windows.desk_switch", "space": "{number}" },
-    "category": "Desk Mode",
-    "sets_tags": ["plugin.windows.desk_mode"],
-    "description": "Switch to the numbered desktop in one phrase."
-  },
-
-  {
     "pattern": ["<number>"],
     "action": { "type": "windows.desk_switch", "space": "{number}" },
     "category": "Desk Mode",
