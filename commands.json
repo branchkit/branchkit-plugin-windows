@@ -69,7 +69,7 @@
   },
 
   {
-    "pattern": [["send", "throw", "move"], "desk", "<number>"],
+    "pattern": ["blank", "desk", "<number>"],
     "action": { "type": "windows.move_to_space", "space": "{number}" },
     "category": "Windowing",
     "description": "Move the current window to another desktop and follow it there."
@@ -81,16 +81,16 @@
     "description": "Move the current window to another desktop but stay here."
   },
   {
-    "pattern": [["send", "throw", "move"], "tab", "desk", "<number>"],
+    "pattern": ["blank", "tab", "desk", "<number>"],
     "action": { "type": "windows.tab_to_space", "space": "{number}" },
     "category": "Windowing",
-    "description": "Move the current browser tab to another desktop (space)."
+    "description": "Move the current browser tab to another desktop and follow it there."
   },
   {
-    "pattern": [["send", "throw", "move"], "tab", "window", "<number>"],
+    "pattern": ["stash", "tab", "window", "<number>"],
     "action": { "type": "windows.tab_to_window", "index": "{number}" },
     "category": "Windowing",
-    "description": "Move the current browser tab to another window."
+    "description": "Move the current browser tab to another window without leaving."
   },
 
   {
