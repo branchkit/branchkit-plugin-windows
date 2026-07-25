@@ -81,19 +81,6 @@
     "description": "Move the current window to another desktop but stay here."
   },
   {
-    "pattern": ["blank", "tab", "desk", "<number>"],
-    "action": { "type": "windows.tab_to_space", "space": "{number}" },
-    "category": "Windowing",
-    "description": "Move the current browser tab to another desktop and follow it there."
-  },
-  {
-    "pattern": ["stash", "tab", "window", "<number>"],
-    "action": { "type": "windows.tab_to_window", "index": "{number}" },
-    "category": "Windowing",
-    "description": "Move the current browser tab to another window without leaving."
-  },
-
-  {
     "pattern": [["desk", "desktop"]],
     "category": "Desk Mode",
     "sets_tags": ["plugin.windows.desk_mode"],

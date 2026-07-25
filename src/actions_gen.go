@@ -12,6 +12,7 @@ type DeskSwitchParams struct {
 type MoveToSpaceParams struct {
 	Space string `json:"space"`
 	Stay *bool `json:"stay,omitempty"`
+	WindowID *string `json:"window_id,omitempty"`
 }
 
 // SnapPosition is a generated enum type.
@@ -29,15 +30,5 @@ const (
 // SnapParams is the params shape for action "windows.snap (Snap Window)".
 type SnapParams struct {
 	Position *SnapPosition `json:"position,omitempty"`
-}
-
-// TabToSpaceParams is the params shape for action "windows.tab_to_space (Move Browser Tab to Space)".
-type TabToSpaceParams struct {
-	Space string `json:"space"`
-}
-
-// TabToWindowParams is the params shape for action "windows.tab_to_window (Move Browser Tab to Window)".
-type TabToWindowParams struct {
-	Index string `json:"index"`
 }
 
