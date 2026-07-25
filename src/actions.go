@@ -58,7 +58,7 @@ func handleWindowsMoveToSpace(req *shared.OnActionRequest) (any, error) {
 		shared.Logf("windows", "move_to_space: invalid space: %q", p.Space)
 		return nil, nil
 	}
-	handleMoveToSpace(req.ActiveWindowID, space)
+	handleMoveToSpace(req.ActiveWindowID, space, p.Stay != nil && *p.Stay)
 	return nil, nil
 }
 

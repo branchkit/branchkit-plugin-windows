@@ -72,7 +72,13 @@
     "pattern": [["send", "throw", "move"], "desk", "<number>"],
     "action": { "type": "windows.move_to_space", "space": "{number}" },
     "category": "Windowing",
-    "description": "Move the current window to another desktop (space)."
+    "description": "Move the current window to another desktop and follow it there."
+  },
+  {
+    "pattern": ["stash", "desk", "<number>"],
+    "action": { "type": "windows.move_to_space", "space": "{number}", "stay": true },
+    "category": "Windowing",
+    "description": "Move the current window to another desktop but stay here."
   },
   {
     "pattern": [["send", "throw", "move"], "tab", "desk", "<number>"],

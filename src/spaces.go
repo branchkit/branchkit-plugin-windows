@@ -24,9 +24,46 @@ var spaceCodes = map[int]int{
 	1: 18, 2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25,
 }
 
+// originDesktopOrdinal returns the Mission Control desktop number (the Ctrl+N
+// index, counted across displays in managed-display order, matching
+// spaceCodes) of the active space containing the given window, or 0 when it
+// can't be determined. Used by the stay variant to hop back after delivery.
+func originDesktopOrdinal(winID string) int {
+	var spaces shared.NativeListSpacesResponse
+	if err := plugin.Call("native.list_spaces", nil, &spaces); err != nil {
+		shared.Logf("windows", "move-to-space: list spaces: %v", err)
+		return 0
+	}
+	ordinal := 0
+	for _, s := range spaces.Spaces {
+		if s.SpaceType != "user" {
+			continue
+		}
+		ordinal++
+		if !s.IsActive {
+			continue
+		}
+		var res shared.NativeWindowsOnSpaceResponse
+		req := shared.NativeWindowsOnSpaceRequest{SpaceID: s.SpaceID}
+		if err := plugin.Call("native.windows_on_space", req, &res); err != nil {
+			continue
+		}
+		for _, id := range res.WindowIds {
+			if id == winID {
+				return ordinal
+			}
+		}
+	}
+	return 0
+}
+
 // handleMoveToSpace moves the active window to the given Mission Control space
-// by holding the title bar with the mouse, pressing Ctrl+N, then releasing.
-func handleMoveToSpace(activeWindowID *string, space int) {
+// by holding the title bar with the mouse, pressing Ctrl+N, then releasing —
+// which inherently navigates to the target space with the window. With `stay`,
+// it hops back to the origin desktop after delivery (the private CGS
+// move-without-switching APIs are dead on modern macOS — verified silent no-op
+// on Sequoia 2026-07-25 — so a visible round trip is the only non-SIP path).
+func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	code, ok := spaceCodes[space]
 	if !ok {
 		shared.Logf("windows","move-to-space: invalid space %d", space)
@@ -82,6 +119,18 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 		return
 	}
 
+	// Resolve the return desktop BEFORE the move — afterwards the window (and
+	// we, riding along with it) are on the target space.
+	returnOrdinal := 0
+	if stay {
+		returnOrdinal = originDesktopOrdinal(winID)
+		if returnOrdinal == 0 {
+			shared.Logf("windows", "move-to-space: stay requested but origin desktop unknown — will follow instead")
+		} else if returnOrdinal == space {
+			returnOrdinal = 0 // already there; nothing to hop back to
+		}
+	}
+
 	// Click title bar area, hold, switch space, release
 	clickX := winX + 75
 	clickY := winY + 10
@@ -109,6 +158,18 @@ func handleMoveToSpace(activeWindowID *string, space int) {
 
 	// Mouse up
 	dispatchAction(json.RawMessage(`{"type":"mouse_up","button":"left"}`))
+
+	// Stay variant: hop back to the origin desktop once the drop has landed.
+	if returnOrdinal != 0 {
+		returnCode, ok := spaceCodes[returnOrdinal]
+		if !ok {
+			shared.Logf("windows", "move-to-space: no keycode for return desktop %d", returnOrdinal)
+			return
+		}
+		time.Sleep(spaceTransitDelay)
+		dispatchAction(json.RawMessage(fmt.Sprintf(
+			`{"type":"shortcut","code":%d,"modifiers":["ctrl"]}`, returnCode)))
+	}
 }
 
 // handleMoveTabToSpace moves the active browser tab to another Mission Control space.

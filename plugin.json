@@ -49,6 +49,12 @@
           "placeholder": "1",
           "field_type": "string",
           "required": true
+        },
+        {
+          "key": "stay",
+          "label": "Stay on Current Space",
+          "field_type": "boolean",
+          "required": false
         }
       ]
     },

@@ -11,6 +11,7 @@ type DeskSwitchParams struct {
 // MoveToSpaceParams is the params shape for action "windows.move_to_space (Move Window to Space)".
 type MoveToSpaceParams struct {
 	Space string `json:"space"`
+	Stay *bool `json:"stay,omitempty"`
 }
 
 // SnapPosition is a generated enum type.
