@@ -12,9 +12,9 @@ import (
 // Timing constants for Mission Control space transitions.
 // These values account for macOS animation latency between operations.
 const (
-	cursorSettleDelay   = 50 * time.Millisecond  // wait for cursor warp to register
-	mouseDownHoldDelay  = 25 * time.Millisecond  // hold before space switch keystroke
-	spaceTransitDelay   = 200 * time.Millisecond // wait for Mission Control space animation
+	cursorSettleDelay  = 50 * time.Millisecond  // wait for cursor warp to register
+	mouseDownHoldDelay = 25 * time.Millisecond  // hold before space switch keystroke
+	spaceTransitDelay  = 200 * time.Millisecond // wait for Mission Control space animation
 )
 
 // switchToDesktop switches to a Mission Control desktop by number via the
@@ -98,13 +98,13 @@ func originDesktopOrdinal(displays []shared.DisplayInfo, pointX, pointY int) int
 // on Sequoia 2026-07-25 — so a visible round trip is the only non-SIP path).
 func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	if space < 1 || space > 16 {
-		shared.Logf("windows","move-to-space: invalid space %d", space)
+		shared.Logf("windows", "move-to-space: invalid space %d", space)
 		return
 	}
 
 	var wm shared.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
-		shared.Logf("windows","move-to-space: get world model: %v", err)
+		shared.Logf("windows", "move-to-space: get world model: %v", err)
 		return
 	}
 
@@ -149,7 +149,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	}
 
 	if !found {
-		shared.Logf("windows","move-to-space: could not find window position")
+		shared.Logf("windows", "move-to-space: could not find window position")
 		return
 	}
 
@@ -179,7 +179,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 		Y int `json:"y"`
 	}{X: clickX, Y: clickY}
 	if err := plugin.Call("native.warp_cursor", warpReq, nil); err != nil {
-		shared.Logf("windows","move-to-space: warp cursor: %v", err)
+		shared.Logf("windows", "move-to-space: warp cursor: %v", err)
 		return
 	}
 	time.Sleep(cursorSettleDelay)
@@ -224,4 +224,3 @@ func mouseButton(direction string) {
 		shared.Logf("windows", "mouse_button %s: %v", direction, err)
 	}
 }
-

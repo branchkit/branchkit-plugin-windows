@@ -10,8 +10,8 @@ type DeskSwitchParams struct {
 
 // MoveToSpaceParams is the params shape for action "windows.move_to_space (Move Window to Space)".
 type MoveToSpaceParams struct {
-	Space string `json:"space"`
-	Stay *bool `json:"stay,omitempty"`
+	Space    string  `json:"space"`
+	Stay     *bool   `json:"stay,omitempty"`
 	WindowID *string `json:"window_id,omitempty"`
 }
 
@@ -19,16 +19,15 @@ type MoveToSpaceParams struct {
 type SnapPosition string
 
 const (
-	SnapPositionLeft SnapPosition = "left"
-	SnapPositionRight SnapPosition = "right"
+	SnapPositionLeft     SnapPosition = "left"
+	SnapPositionRight    SnapPosition = "right"
 	SnapPositionMaximize SnapPosition = "maximize"
-	SnapPositionCenter SnapPosition = "center"
-	SnapPositionNext SnapPosition = "next"
-	SnapPositionPrev SnapPosition = "prev"
+	SnapPositionCenter   SnapPosition = "center"
+	SnapPositionNext     SnapPosition = "next"
+	SnapPositionPrev     SnapPosition = "prev"
 )
 
 // SnapParams is the params shape for action "windows.snap (Snap Window)".
 type SnapParams struct {
 	Position *SnapPosition `json:"position,omitempty"`
 }
-
