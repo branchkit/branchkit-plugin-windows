@@ -4,7 +4,8 @@
   "privileges": [
     "windows",
     "input",
-    "shell"
+    "shell",
+    "display"
   ],
   "version": "1.0.0",
   "min_api_version": "0.1.0",

@@ -211,7 +211,9 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 			X int `json:"x"`
 			Y int `json:"y"`
 		}{X: origCursorX, Y: origCursorY}
-		_ = plugin.Call("native.warp_cursor", restoreReq, nil)
+		if err := plugin.Call("native.warp_cursor", restoreReq, nil); err != nil {
+			shared.Logf("windows", "cursor restore: %v", err)
+		}
 	}
 }
 
