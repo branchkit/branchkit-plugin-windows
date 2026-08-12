@@ -9,9 +9,12 @@ var plugin *shared.Plugin
 func main() {
 	plugin = shared.NewPlugin()
 
-	plugin.HandleAction("windows.snap", handleWindowsSnap)
-	plugin.HandleAction("windows.desk_switch", handleDeskSwitch)
-	plugin.HandleAction("windows.move_to_space", handleWindowsMoveToSpace)
+	// Registrars are generated from plugin.json into actions_gen.go, so the
+	// action string and the params type both come from the manifest and
+	// neither can drift from it.
+	HandleSnap(plugin, handleWindowsSnap)
+	HandleDeskSwitch(plugin, handleDeskSwitch)
+	HandleMoveToSpace(plugin, handleWindowsMoveToSpace)
 	shared.HandleTyped(plugin, "render_settings", handleRenderSettingsRPC)
 
 	plugin.Run()
