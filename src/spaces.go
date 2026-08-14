@@ -187,7 +187,26 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	// Mouse down, then a zero-distance drag to latch the window onto the
 	// cursor — macOS only treats the window as grabbed once a dragged event
 	// follows the press (the Amethyst/Silica latch).
+	//
+	// The release is deferred, not just written below, because the button we
+	// press here is REAL system state that outlives this function. A panic
+	// between press and release is caught by the SDK's per-request recovery
+	// (plugin-sdk-go/rpc.go handleRequest), so the process keeps running and
+	// nothing ever posts the matching up event — the window server stays
+	// latched with the left button down and every subsequent click reads as a
+	// drag, until the user physically clicks. The plugin never notices.
+	//
+	// Same rule as the boot-time tag releases: the side that outlives the
+	// failure must own the release — and here that side is the OS, so the
+	// release has to be unconditional.
+	//
+	// A backstop rather than a plain `defer mouseButton("release")`, because
+	// ORDER is load-bearing on the happy path: the drop has to land before the
+	// return-hop below, so the release can't be moved to function exit. The
+	// latch releases exactly once, wherever it happens first.
+	releaseMouse := releaseOnce(func() { mouseButton("release") })
 	mouseButton("press")
+	defer releaseMouse()
 	mouseButton("drag")
 	time.Sleep(mouseDownHoldDelay)
 
@@ -197,8 +216,9 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 
 	time.Sleep(spaceTransitDelay)
 
-	// Mouse up
-	mouseButton("release")
+	// Mouse up — here, not at function exit, so the drop lands before any
+	// return-hop.
+	releaseMouse()
 
 	// Stay variant: hop back to the origin desktop once the drop has landed.
 	if returnOrdinal != 0 {
@@ -214,6 +234,22 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 		if err := plugin.Call("native.warp_cursor", restoreReq, nil); err != nil {
 			shared.Logf("windows", "cursor restore: %v", err)
 		}
+	}
+}
+
+// releaseOnce wraps a release so it runs at most once, however many paths reach
+// it. Lets a sequence keep its release in the position the happy path needs
+// while still having `defer` as the backstop for the paths that never get
+// there — a plain `defer release()` would move the release to function exit,
+// which is wrong when later steps depend on it having already landed.
+func releaseOnce(fn func()) func() {
+	done := false
+	return func() {
+		if done {
+			return
+		}
+		done = true
+		fn()
 	}
 }
 
