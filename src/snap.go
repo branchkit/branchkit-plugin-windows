@@ -70,7 +70,7 @@ func handleSnap(activeWindowID *string, direction string) {
 
 	batchReq := struct {
 		Frames   []branchkit.WindowFrame `json:"frames"`
-		Readback bool                 `json:"readback"`
+		Readback bool                    `json:"readback"`
 	}{
 		Frames: []branchkit.WindowFrame{
 			{WindowID: winID, X: frame.X, Y: frame.Y, W: frame.W, H: frame.H},
