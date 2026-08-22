@@ -12,9 +12,9 @@ const menuBarHeight = 25
 // handleSnap calculates snap geometry and applies it via batch-set-frames.
 func handleSnap(activeWindowID *string, direction string) {
 	start := time.Now()
-	var wm shared.WorldModel
+	var wm branchkit.WorldModel
 	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
-		shared.Logf("windows", "snap: failed to get world model: %v", err)
+		branchkit.Logf("windows", "snap: failed to get world model: %v", err)
 		return
 	}
 
@@ -25,11 +25,11 @@ func handleSnap(activeWindowID *string, direction string) {
 		winID = *wm.ActiveWindowID
 	}
 	if winID == "" {
-		shared.Logf("windows", "snap: no active window")
+		branchkit.Logf("windows", "snap: no active window")
 		return
 	}
 
-	var win *shared.WindowInfo
+	var win *branchkit.WindowInfo
 	for i := range wm.Windows {
 		if wm.Windows[i].ID == winID {
 			win = &wm.Windows[i]
@@ -37,12 +37,12 @@ func handleSnap(activeWindowID *string, direction string) {
 		}
 	}
 	if win == nil {
-		shared.Logf("windows", "snap: window %s not found", winID)
+		branchkit.Logf("windows", "snap: window %s not found", winID)
 		return
 	}
 
 	if len(wm.Displays) == 0 {
-		shared.Logf("windows", "snap: no displays")
+		branchkit.Logf("windows", "snap: no displays")
 		return
 	}
 
@@ -60,48 +60,48 @@ func handleSnap(activeWindowID *string, direction string) {
 
 	frame := calculateSnapGeometry(win, screen, screenIdx, wm.Displays, direction)
 	if frame == nil {
-		shared.Logf("windows", "snap: no geometry for direction %q", direction)
+		branchkit.Logf("windows", "snap: no geometry for direction %q", direction)
 		return
 	}
 
-	shared.Logf("windows", "snap: window=%s direction=%s → x=%d y=%d w=%d h=%d (screen %d: %dx%d)",
+	branchkit.Logf("windows", "snap: window=%s direction=%s → x=%d y=%d w=%d h=%d (screen %d: %dx%d)",
 		winID, direction, frame.X, frame.Y, frame.W, frame.H,
 		screenIdx, screen.W, screen.H)
 
 	batchReq := struct {
-		Frames   []shared.WindowFrame `json:"frames"`
+		Frames   []branchkit.WindowFrame `json:"frames"`
 		Readback bool                 `json:"readback"`
 	}{
-		Frames: []shared.WindowFrame{
+		Frames: []branchkit.WindowFrame{
 			{WindowID: winID, X: frame.X, Y: frame.Y, W: frame.W, H: frame.H},
 		},
 		Readback: false,
 	}
 	if err := plugin.Call("native.batch_set_frames", batchReq, nil); err != nil {
-		shared.Logf("windows", "snap: batch-set-frames error: %v", err)
+		branchkit.Logf("windows", "snap: batch-set-frames error: %v", err)
 	} else {
-		shared.Logf("windows", "snap: batch-set-frames succeeded (applied in %dms)", time.Since(start).Milliseconds())
+		branchkit.Logf("windows", "snap: batch-set-frames succeeded (applied in %dms)", time.Since(start).Milliseconds())
 	}
 }
 
-func calculateSnapGeometry(win *shared.WindowInfo, screen shared.DisplayInfo, screenIdx int, displays []shared.DisplayInfo, direction string) *shared.Rect {
+func calculateSnapGeometry(win *branchkit.WindowInfo, screen branchkit.DisplayInfo, screenIdx int, displays []branchkit.DisplayInfo, direction string) *branchkit.Rect {
 	switch direction {
 	case "left":
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: screen.X,
 			Y: screen.Y + menuBarHeight,
 			W: screen.W / 2,
 			H: screen.H - menuBarHeight,
 		}
 	case "right":
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: screen.X + screen.W/2,
 			Y: screen.Y + menuBarHeight,
 			W: screen.W / 2,
 			H: screen.H - menuBarHeight,
 		}
 	case "top", "up":
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: screen.X,
 			Y: screen.Y + menuBarHeight,
 			W: screen.W,
@@ -109,21 +109,21 @@ func calculateSnapGeometry(win *shared.WindowInfo, screen shared.DisplayInfo, sc
 		}
 	case "bottom", "down":
 		halfH := (screen.H - menuBarHeight) / 2
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: screen.X,
 			Y: screen.Y + menuBarHeight + halfH,
 			W: screen.W,
 			H: halfH,
 		}
 	case "maximize", "full":
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: screen.X,
 			Y: screen.Y + menuBarHeight,
 			W: screen.W,
 			H: screen.H - menuBarHeight,
 		}
 	case "center":
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: screen.X + screen.W/4,
 			Y: screen.Y + screen.H/4,
 			W: screen.W / 2,
@@ -148,7 +148,7 @@ func calculateSnapGeometry(win *shared.WindowInfo, screen shared.DisplayInfo, sc
 		relW := float64(win.W) / float64(screen.W)
 		relH := float64(win.H) / float64(screen.H)
 
-		return &shared.Rect{
+		return &branchkit.Rect{
 			X: target.X + int(math.Round(relX*float64(target.W))),
 			Y: target.Y + int(math.Round(relY*float64(target.H))),
 			W: int(math.Round(relW * float64(target.W))),

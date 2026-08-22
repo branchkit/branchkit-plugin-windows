@@ -3,7 +3,7 @@
 
 package main
 
-import shared "github.com/branchkit/plugin-sdk-go"
+import "github.com/branchkit/plugin-sdk-go"
 
 // DeskSwitchParams is the params shape for action "windows.desk_switch (Switch Desktop)".
 type DeskSwitchParams struct {
@@ -11,8 +11,8 @@ type DeskSwitchParams struct {
 }
 
 // HandleDeskSwitch registers a typed handler for action "windows.desk_switch (Switch Desktop)".
-func HandleDeskSwitch(p *shared.Plugin, fn func(DeskSwitchParams, *shared.OnActionRequest) (any, error)) {
-	shared.HandleActionTyped(p, "windows.desk_switch", fn)
+func HandleDeskSwitch(p *branchkit.Plugin, fn func(DeskSwitchParams, *branchkit.OnActionRequest) (any, error)) {
+	branchkit.HandleActionTyped(p, "windows.desk_switch", fn)
 }
 
 // MoveToSpaceParams is the params shape for action "windows.move_to_space (Move Window to Space)".
@@ -23,8 +23,8 @@ type MoveToSpaceParams struct {
 }
 
 // HandleMoveToSpace registers a typed handler for action "windows.move_to_space (Move Window to Space)".
-func HandleMoveToSpace(p *shared.Plugin, fn func(MoveToSpaceParams, *shared.OnActionRequest) (any, error)) {
-	shared.HandleActionTyped(p, "windows.move_to_space", fn)
+func HandleMoveToSpace(p *branchkit.Plugin, fn func(MoveToSpaceParams, *branchkit.OnActionRequest) (any, error)) {
+	branchkit.HandleActionTyped(p, "windows.move_to_space", fn)
 }
 
 // SnapPosition is a generated enum type.
@@ -45,6 +45,6 @@ type SnapParams struct {
 }
 
 // HandleSnap registers a typed handler for action "windows.snap (Snap Window)".
-func HandleSnap(p *shared.Plugin, fn func(SnapParams, *shared.OnActionRequest) (any, error)) {
-	shared.HandleActionTyped(p, "windows.snap", fn)
+func HandleSnap(p *branchkit.Plugin, fn func(SnapParams, *branchkit.OnActionRequest) (any, error)) {
+	branchkit.HandleActionTyped(p, "windows.snap", fn)
 }

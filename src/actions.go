@@ -19,10 +19,10 @@ import (
 // strings — so integer-valued params stay typed as strings in the manifest
 // and are parsed inside the handler with strconv.
 
-func handleDeskSwitch(p DeskSwitchParams, _ *shared.OnActionRequest) (any, error) {
+func handleDeskSwitch(p DeskSwitchParams, _ *branchkit.OnActionRequest) (any, error) {
 	space, err := strconv.Atoi(p.Space)
 	if err != nil || space < 1 || space > 16 {
-		shared.Logf("windows", "desk_switch: invalid space: %q", p.Space)
+		branchkit.Logf("windows", "desk_switch: invalid space: %q", p.Space)
 		return nil, nil
 	}
 	// The actuator resolves the user's actual "Switch to Desktop N" symbolic
@@ -32,7 +32,7 @@ func handleDeskSwitch(p DeskSwitchParams, _ *shared.OnActionRequest) (any, error
 	return nil, nil
 }
 
-func handleWindowsSnap(p SnapParams, req *shared.OnActionRequest) (any, error) {
+func handleWindowsSnap(p SnapParams, req *branchkit.OnActionRequest) (any, error) {
 	if p.Position == nil {
 		return nil, nil
 	}
@@ -40,10 +40,10 @@ func handleWindowsSnap(p SnapParams, req *shared.OnActionRequest) (any, error) {
 	return nil, nil
 }
 
-func handleWindowsMoveToSpace(p MoveToSpaceParams, req *shared.OnActionRequest) (any, error) {
+func handleWindowsMoveToSpace(p MoveToSpaceParams, req *branchkit.OnActionRequest) (any, error) {
 	space, err := strconv.Atoi(p.Space)
 	if err != nil || space < 1 || space > 9 {
-		shared.Logf("windows", "move_to_space: invalid space: %q", p.Space)
+		branchkit.Logf("windows", "move_to_space: invalid space: %q", p.Space)
 		return nil, nil
 	}
 	// Explicit window_id wins over the envelope's active window — a

@@ -6,13 +6,13 @@ import (
 	"github.com/branchkit/plugin-sdk-go"
 )
 
-func makeTestWorld() (*shared.WindowInfo, shared.DisplayInfo, []shared.DisplayInfo) {
-	win := &shared.WindowInfo{
+func makeTestWorld() (*branchkit.WindowInfo, branchkit.DisplayInfo, []branchkit.DisplayInfo) {
+	win := &branchkit.WindowInfo{
 		ID: "test-win", AppID: "com.test", AppName: "Test", Title: "Test",
 		X: 100, Y: 100, W: 800, H: 600,
 	}
-	display := shared.DisplayInfo{ID: 1, X: 0, Y: 0, W: 1920, H: 1080}
-	return win, display, []shared.DisplayInfo{display}
+	display := branchkit.DisplayInfo{ID: 1, X: 0, Y: 0, W: 1920, H: 1080}
+	return win, display, []branchkit.DisplayInfo{display}
 }
 
 func TestSnapLeft(t *testing.T) {
@@ -85,13 +85,13 @@ func TestSnapCenter(t *testing.T) {
 }
 
 func TestSnapNextMonitor(t *testing.T) {
-	win := &shared.WindowInfo{
+	win := &branchkit.WindowInfo{
 		ID: "test-win", AppID: "com.test", AppName: "Test", Title: "Test",
 		X: 100, Y: 100, W: 800, H: 600,
 	}
-	d1 := shared.DisplayInfo{ID: 1, X: 0, Y: 0, W: 1920, H: 1080}
-	d2 := shared.DisplayInfo{ID: 2, X: 1920, Y: 0, W: 2560, H: 1440}
-	displays := []shared.DisplayInfo{d1, d2}
+	d1 := branchkit.DisplayInfo{ID: 1, X: 0, Y: 0, W: 1920, H: 1080}
+	d2 := branchkit.DisplayInfo{ID: 2, X: 1920, Y: 0, W: 2560, H: 1440}
+	displays := []branchkit.DisplayInfo{d1, d2}
 
 	r := calculateSnapGeometry(win, d1, 0, displays, "next")
 	if r == nil {
@@ -108,13 +108,13 @@ func TestSnapNextMonitor(t *testing.T) {
 }
 
 func TestSnapPrevMonitor(t *testing.T) {
-	win := &shared.WindowInfo{
+	win := &branchkit.WindowInfo{
 		ID: "test-win", AppID: "com.test", AppName: "Test", Title: "Test",
 		X: 2020, Y: 100, W: 1280, H: 720,
 	}
-	d1 := shared.DisplayInfo{ID: 1, X: 0, Y: 0, W: 1920, H: 1080}
-	d2 := shared.DisplayInfo{ID: 2, X: 1920, Y: 0, W: 2560, H: 1440}
-	displays := []shared.DisplayInfo{d1, d2}
+	d1 := branchkit.DisplayInfo{ID: 1, X: 0, Y: 0, W: 1920, H: 1080}
+	d2 := branchkit.DisplayInfo{ID: 2, X: 1920, Y: 0, W: 2560, H: 1440}
+	displays := []branchkit.DisplayInfo{d1, d2}
 
 	r := calculateSnapGeometry(win, d2, 1, displays, "prev")
 	if r == nil {

@@ -40,7 +40,7 @@ func renderSettings(search string) string {
 	return toolkit.RenderTempl("windows", WindowsSettings(cmds))
 }
 
-func handleRenderSettingsRPC(req *shared.RenderSettingsRequest) (any, error) {
+func handleRenderSettingsRPC(req *branchkit.RenderSettingsRequest) (any, error) {
 	html := renderSettings(req.Search)
-	return shared.RenderSettingsResponse{HTML: html}, nil
+	return branchkit.RenderSettingsResponse{HTML: html}, nil
 }
