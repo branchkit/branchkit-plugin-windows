@@ -11,6 +11,13 @@
   "min_api_version": "0.1.0",
   "description": "Native window management \u2014 snap, move to space, switch desktops. Uses built-in OS primitives without a tiling system.",
   "author": "BranchKit",
+  "dev": {
+    "build": [
+      ["templ", "generate"],
+      ["go", "build", "-ldflags=-s -w", "-o", "../windows-plugin", "."]
+    ],
+    "build_dir": "src"
+  },
   "run": "./windows-plugin",
   "collection_data": {
     "voice_commands": "commands.json"
