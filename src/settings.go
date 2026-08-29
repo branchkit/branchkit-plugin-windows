@@ -1,9 +1,38 @@
 package main
 
 import (
+	"bytes"
+	"context"
+	"strings"
+
+	"github.com/a-h/templ"
 	"github.com/branchkit/plugin-sdk-go"
-	toolkit "github.com/branchkit/plugin-toolkit-go"
 )
+
+// matchesSearch reports whether any field contains the search string
+// (case-insensitive). An empty search matches everything.
+func matchesSearch(search string, fields ...string) bool {
+	if search == "" {
+		return true
+	}
+	lower := strings.ToLower(search)
+	for _, f := range fields {
+		if strings.Contains(strings.ToLower(f), lower) {
+			return true
+		}
+	}
+	return false
+}
+
+// renderTempl renders a templ component to an HTML string.
+func renderTempl(c templ.Component) string {
+	var buf bytes.Buffer
+	if err := c.Render(context.Background(), &buf); err != nil {
+		branchkit.Logf("windows", "templ render error: %v", err)
+		return ""
+	}
+	return buf.String()
+}
 
 type commandRow struct {
 	Phrase      string
@@ -30,14 +59,14 @@ func renderSettings(search string) string {
 	if search != "" {
 		var filtered []commandRow
 		for _, c := range cmds {
-			if toolkit.MatchesSearch(search, c.Phrase, c.Description) {
+			if matchesSearch(search, c.Phrase, c.Description) {
 				filtered = append(filtered, c)
 			}
 		}
 		cmds = filtered
 	}
 
-	return toolkit.RenderTempl("windows", WindowsSettings(cmds))
+	return renderTempl(WindowsSettings(cmds))
 }
 
 func handleRenderSettingsRPC(req *branchkit.RenderSettingsRequest) (any, error) {

@@ -1,10 +1,6 @@
 package main
 
-import (
-	"testing"
-
-	toolkit "github.com/branchkit/plugin-toolkit-go"
-)
+import "testing"
 
 func TestMatchesSearch(t *testing.T) {
 	tests := []struct {
@@ -19,7 +15,7 @@ func TestMatchesSearch(t *testing.T) {
 		{"anything", "", true},
 	}
 	for _, tt := range tests {
-		got := toolkit.MatchesSearch(tt.search, tt.s)
+		got := matchesSearch(tt.search, tt.s)
 		if got != tt.want {
 			t.Errorf("MatchesSearch(%q, %q) = %v, want %v", tt.search, tt.s, got, tt.want)
 		}
@@ -32,10 +28,10 @@ func TestRenderSettingsNoFilter(t *testing.T) {
 		t.Fatal("expected non-empty HTML")
 	}
 	// Should contain some known commands
-	if !toolkit.MatchesSearch("snap left", html) {
+	if !matchesSearch("snap left", html) {
 		t.Error("expected 'snap left' in output")
 	}
-	if !toolkit.MatchesSearch("Mission Control", html) {
+	if !matchesSearch("Mission Control", html) {
 		t.Error("expected 'Mission Control' in output")
 	}
 }
@@ -46,11 +42,11 @@ func TestRenderSettingsWithFilter(t *testing.T) {
 		t.Fatal("expected non-empty HTML")
 	}
 	// Should contain tab commands
-	if !toolkit.MatchesSearch("tab", html) {
+	if !matchesSearch("tab", html) {
 		t.Error("expected 'tab' in filtered output")
 	}
 	// Should NOT contain snap left (doesn't match "tab")
-	if toolkit.MatchesSearch("snap left", html) {
+	if matchesSearch("snap left", html) {
 		t.Error("'snap left' should be filtered out by 'tab' search")
 	}
 }
