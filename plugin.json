@@ -11,6 +11,7 @@
   "min_api_version": "0.1.0",
   "description": "Native window management \u2014 snap, move to space, switch desktops. Uses built-in OS primitives without a tiling system.",
   "author": "BranchKit",
+  "publisher": "github:branchkit",
   "dev": {
     "build": [
       ["templ", "generate"],
