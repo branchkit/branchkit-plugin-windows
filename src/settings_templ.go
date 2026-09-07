@@ -29,12 +29,12 @@ func WindowsSettings(commands []commandRow) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"settings-table\"><div class=\"table-header\" style=\"grid-template-columns: 1fr 1fr;\"><div>Voice Command</div><div style=\"text-align: right;\">Action</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<bk-table columns=\"1fr 1fr\"><div class=\"table-header\"><div>Voice Command</div><div style=\"text-align: right;\">Action</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, cmd := range commands {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"settings-row\" style=\"grid-template-columns: 1fr 1fr;\"><div class=\"label\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"settings-row\"><div class=\"label\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -65,7 +65,7 @@ func WindowsSettings(commands []commandRow) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</bk-table>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
