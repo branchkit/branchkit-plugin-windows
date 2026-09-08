@@ -3,11 +3,15 @@ package main
 import (
 	"bytes"
 	"context"
+	_ "embed"
 	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/branchkit/plugin-sdk-go"
 )
+
+//go:embed settings.css
+var windowsCSS string
 
 // matchesSearch reports whether any field contains the search string
 // (case-insensitive). An empty search matches everything.
@@ -71,5 +75,5 @@ func renderSettings(search string) string {
 
 func handleRenderSettingsRPC(req *branchkit.RenderSettingsRequest) (any, error) {
 	html := renderSettings(req.Search)
-	return branchkit.RenderSettingsResponse{HTML: html}, nil
+	return branchkit.RenderSettingsResponse{HTML: html, CSS: &windowsCSS}, nil
 }
