@@ -19,7 +19,7 @@ import (
 // strings — so integer-valued params stay typed as strings in the manifest
 // and are parsed inside the handler with strconv.
 
-func handleDeskSwitch(p DeskSwitchParams, _ *branchkit.OnActionRequest) (any, error) {
+func (h *Host) handleDeskSwitch(p DeskSwitchParams, _ *branchkit.OnActionRequest) (any, error) {
 	space, err := strconv.Atoi(p.Space)
 	if err != nil || space < 1 || space > 16 {
 		branchkit.Logf("windows", "desk_switch: invalid space: %q", p.Space)
@@ -28,19 +28,19 @@ func handleDeskSwitch(p DeskSwitchParams, _ *branchkit.OnActionRequest) (any, er
 	// The actuator resolves the user's actual "Switch to Desktop N" symbolic
 	// hotkey (respects remaps, auto-enables disabled shortcuts) — no
 	// hardcoded Ctrl+N keycode map.
-	switchToDesktop(space)
+	h.switchToDesktop(space)
 	return nil, nil
 }
 
-func handleWindowsSnap(p SnapParams, req *branchkit.OnActionRequest) (any, error) {
+func (h *Host) handleWindowsSnap(p SnapParams, req *branchkit.OnActionRequest) (any, error) {
 	if p.Position == nil {
 		return nil, nil
 	}
-	handleSnap(req.ActiveWindowID, string(*p.Position))
+	h.handleSnap(req.ActiveWindowID, string(*p.Position))
 	return nil, nil
 }
 
-func handleWindowsMoveToSpace(p MoveToSpaceParams, req *branchkit.OnActionRequest) (any, error) {
+func (h *Host) handleWindowsMoveToSpace(p MoveToSpaceParams, req *branchkit.OnActionRequest) (any, error) {
 	space, err := strconv.Atoi(p.Space)
 	if err != nil || space < 1 || space > 9 {
 		branchkit.Logf("windows", "move_to_space: invalid space: %q", p.Space)
@@ -53,6 +53,6 @@ func handleWindowsMoveToSpace(p MoveToSpaceParams, req *branchkit.OnActionReques
 	if p.WindowID != nil && *p.WindowID != "" {
 		windowID = p.WindowID
 	}
-	handleMoveToSpace(windowID, space, p.Stay != nil && *p.Stay)
+	h.handleMoveToSpace(windowID, space, p.Stay != nil && *p.Stay)
 	return nil, nil
 }

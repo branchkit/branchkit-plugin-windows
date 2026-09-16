@@ -21,17 +21,17 @@ const (
 // actuator, which resolves the user's own "Switch to Desktop N" symbolic
 // hotkey (respecting remaps and auto-enabling disabled shortcuts) instead of
 // assuming Ctrl+N. Desktops 1-16.
-func switchToDesktop(desktop int) {
+func (h *Host) switchToDesktop(desktop int) {
 	branchkit.Logf("windows", "switch_space → desktop %d", desktop)
-	if err := plugin.Call("native.switch_space", map[string]any{"space_id": desktop}, nil); err != nil {
+	if err := h.plugin.Call("native.switch_space", map[string]any{"space_id": desktop}, nil); err != nil {
 		branchkit.Logf("windows", "switch to desktop %d: %v", desktop, err)
 	}
 }
 
 // cursorPosition returns the current cursor location, or ok=false.
-func cursorPosition() (x, y int, ok bool) {
+func (h *Host) cursorPosition() (x, y int, ok bool) {
 	var info branchkit.NativeCursorInfoResponse
-	if err := plugin.Call("native.cursor_info", nil, &info); err != nil {
+	if err := h.plugin.Call("native.cursor_info", nil, &info); err != nil {
 		return 0, 0, false
 	}
 	return info.X, info.Y, true
@@ -50,9 +50,9 @@ func cursorPosition() (x, y int, ok bool) {
 // user to the wrong desk (2026-07-25). Falls back to the first active user
 // space when no display contains the point. Returns 0 only when spaces can't
 // be listed.
-func originDesktopOrdinal(displays []branchkit.DisplayInfo, pointX, pointY int) int {
+func (h *Host) originDesktopOrdinal(displays []branchkit.DisplayInfo, pointX, pointY int) int {
 	var spaces branchkit.NativeListSpacesResponse
-	if err := plugin.Call("native.list_spaces", nil, &spaces); err != nil {
+	if err := h.plugin.Call("native.list_spaces", nil, &spaces); err != nil {
 		branchkit.Logf("windows", "move-to-space: list spaces: %v", err)
 		return 0
 	}
@@ -96,14 +96,14 @@ func originDesktopOrdinal(displays []branchkit.DisplayInfo, pointX, pointY int) 
 // it hops back to the origin desktop after delivery (the private CGS
 // move-without-switching APIs are dead on modern macOS — verified silent no-op
 // on Sequoia 2026-07-25 — so a visible round trip is the only non-SIP path).
-func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
+func (h *Host) handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	if space < 1 || space > 16 {
 		branchkit.Logf("windows", "move-to-space: invalid space %d", space)
 		return
 	}
 
 	var wm branchkit.WorldModel
-	if err := plugin.Call("native.world_model", nil, &wm); err != nil {
+	if err := h.plugin.Call("native.world_model", nil, &wm); err != nil {
 		branchkit.Logf("windows", "move-to-space: get world model: %v", err)
 		return
 	}
@@ -131,7 +131,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	// Fallback: AppleScript to find frontmost window position
 	if !found {
 		var result branchkit.NativeRunApplescriptResponse
-		err := plugin.Call("native.run_applescript", map[string]string{
+		err := h.plugin.Call("native.run_applescript", map[string]string{
 			"script": `tell application "System Events" to tell (first process whose frontmost is true) to get position of window 1`,
 		}, &result)
 		if err == nil && result.ExitCode == 0 {
@@ -157,7 +157,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	// we, riding along with it) are on the target space.
 	returnOrdinal := 0
 	if stay {
-		returnOrdinal = originDesktopOrdinal(wm.Displays, winX+winW/2, winY+winH/2)
+		returnOrdinal = h.originDesktopOrdinal(wm.Displays, winX+winW/2, winY+winH/2)
 		if returnOrdinal == 0 {
 			branchkit.Logf("windows", "move-to-space: stay requested but origin desktop unknown — will follow instead")
 		} else if returnOrdinal == space {
@@ -167,7 +167,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 
 	// Remember where the cursor was so the whole operation doesn't strand it
 	// on the moved window's title bar.
-	origCursorX, origCursorY, restoreCursor := cursorPosition()
+	origCursorX, origCursorY, restoreCursor := h.cursorPosition()
 
 	// Click title bar area, hold, switch space, release
 	clickX := winX + 75
@@ -178,7 +178,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 		X int `json:"x"`
 		Y int `json:"y"`
 	}{X: clickX, Y: clickY}
-	if err := plugin.Call("native.warp_cursor", warpReq, nil); err != nil {
+	if err := h.plugin.Call("native.warp_cursor", warpReq, nil); err != nil {
 		branchkit.Logf("windows", "move-to-space: warp cursor: %v", err)
 		return
 	}
@@ -204,15 +204,15 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	// ORDER is load-bearing on the happy path: the drop has to land before the
 	// return-hop below, so the release can't be moved to function exit. The
 	// latch releases exactly once, wherever it happens first.
-	releaseMouse := releaseOnce(func() { mouseButton("release") })
-	mouseButton("press")
+	releaseMouse := releaseOnce(func() { h.mouseButton("release") })
+	h.mouseButton("press")
 	defer releaseMouse()
-	mouseButton("drag")
+	h.mouseButton("drag")
 	time.Sleep(mouseDownHoldDelay)
 
 	// Switch to the target desktop from under the held window (symbolic
 	// hotkey — respects the user's actual shortcut config)
-	switchToDesktop(space)
+	h.switchToDesktop(space)
 
 	time.Sleep(spaceTransitDelay)
 
@@ -223,7 +223,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	// Stay variant: hop back to the origin desktop once the drop has landed.
 	if returnOrdinal != 0 {
 		time.Sleep(spaceTransitDelay)
-		switchToDesktop(returnOrdinal)
+		h.switchToDesktop(returnOrdinal)
 	}
 
 	if restoreCursor {
@@ -231,7 +231,7 @@ func handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 			X int `json:"x"`
 			Y int `json:"y"`
 		}{X: origCursorX, Y: origCursorY}
-		if err := plugin.Call("native.warp_cursor", restoreReq, nil); err != nil {
+		if err := h.plugin.Call("native.warp_cursor", restoreReq, nil); err != nil {
 			branchkit.Logf("windows", "cursor restore: %v", err)
 		}
 	}
@@ -257,8 +257,8 @@ func releaseOnce(fn func()) func() {
 // the input.mouse_button RPC. (The old raw `dispatch` route is denied to
 // plugin callers by the operation auth layer — the grab half of the drag
 // trick had been failing silently through it.)
-func mouseButton(direction string) {
-	if err := plugin.Call("input.mouse_button", map[string]any{"button": "left", "direction": direction}, nil); err != nil {
+func (h *Host) mouseButton(direction string) {
+	if err := h.plugin.Call("input.mouse_button", map[string]any{"button": "left", "direction": direction}, nil); err != nil {
 		branchkit.Logf("windows", "mouse_button %s: %v", direction, err)
 	}
 }

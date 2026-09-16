@@ -7,7 +7,6 @@ import (
 	"github.com/branchkit/plugin-sdk-go"
 )
 
-
 //go:embed settings.css
 var windowsCSS string
 
@@ -25,8 +24,6 @@ func matchesSearch(search string, fields ...string) bool {
 	}
 	return false
 }
-
-
 
 type commandRow struct {
 	Phrase      string
@@ -64,4 +61,3 @@ func renderSettings(req *branchkit.RenderSettingsRequest) (string, error) {
 
 	return branchkit.RenderComponent(WindowsSettings(cmds))
 }
-
