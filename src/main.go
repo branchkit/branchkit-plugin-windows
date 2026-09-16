@@ -15,7 +15,9 @@ func main() {
 	HandleSnap(plugin, handleWindowsSnap)
 	HandleDeskSwitch(plugin, handleDeskSwitch)
 	HandleMoveToSpace(plugin, handleWindowsMoveToSpace)
-	branchkit.HandleTyped(plugin, "render_settings", handleRenderSettingsRPC)
+	plugin.SettingsCSS(windowsCSS)
+	plugin.SettingsTab("commands", renderSettings)
+
 
 	plugin.Run()
 }

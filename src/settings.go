@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bytes"
-	"context"
 	_ "embed"
 	"strings"
 
-	"github.com/a-h/templ"
 	"github.com/branchkit/plugin-sdk-go"
 )
+
 
 //go:embed settings.css
 var windowsCSS string
@@ -28,15 +26,7 @@ func matchesSearch(search string, fields ...string) bool {
 	return false
 }
 
-// renderTempl renders a templ component to an HTML string.
-func renderTempl(c templ.Component) string {
-	var buf bytes.Buffer
-	if err := c.Render(context.Background(), &buf); err != nil {
-		branchkit.Logf("windows", "templ render error: %v", err)
-		return ""
-	}
-	return buf.String()
-}
+
 
 type commandRow struct {
 	Phrase      string
@@ -58,7 +48,9 @@ var staticCommands = []commandRow{
 	{"next window", "Cycle windows (Cmd+`)"},
 }
 
-func renderSettings(search string) string {
+func renderSettings(req *branchkit.RenderSettingsRequest) (string, error) {
+	search := req.Search
+
 	cmds := staticCommands
 	if search != "" {
 		var filtered []commandRow
@@ -70,10 +62,6 @@ func renderSettings(search string) string {
 		cmds = filtered
 	}
 
-	return renderTempl(WindowsSettings(cmds))
+	return branchkit.RenderComponent(WindowsSettings(cmds))
 }
 
-func handleRenderSettingsRPC(req *branchkit.RenderSettingsRequest) (any, error) {
-	html := renderSettings(req.Search)
-	return branchkit.RenderSettingsResponse{HTML: html, CSS: &windowsCSS}, nil
-}

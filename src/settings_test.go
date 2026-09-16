@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/branchkit/plugin-sdk-go"
+)
 
 func TestMatchesSearch(t *testing.T) {
 	tests := []struct {
@@ -23,7 +27,7 @@ func TestMatchesSearch(t *testing.T) {
 }
 
 func TestRenderSettingsNoFilter(t *testing.T) {
-	html := renderSettings("")
+	html := mustRenderSettings(t, "")
 	if html == "" {
 		t.Fatal("expected non-empty HTML")
 	}
@@ -37,7 +41,7 @@ func TestRenderSettingsNoFilter(t *testing.T) {
 }
 
 func TestRenderSettingsWithFilter(t *testing.T) {
-	html := renderSettings("tab")
+	html := mustRenderSettings(t, "tab")
 	if html == "" {
 		t.Fatal("expected non-empty HTML")
 	}
@@ -52,9 +56,18 @@ func TestRenderSettingsWithFilter(t *testing.T) {
 }
 
 func TestRenderSettingsNoMatch(t *testing.T) {
-	html := renderSettings("zzzznonexistent")
+	html := mustRenderSettings(t, "zzzznonexistent")
 	// Should still render (empty table), not crash
 	if html == "" {
 		t.Fatal("expected non-empty HTML even with no matches")
 	}
+}
+
+func mustRenderSettings(t *testing.T, search string) string {
+	t.Helper()
+	html, err := renderSettings(&branchkit.RenderSettingsRequest{Search: search})
+	if err != nil {
+		t.Fatalf("render: %v", err)
+	}
+	return html
 }
