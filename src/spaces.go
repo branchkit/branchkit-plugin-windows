@@ -23,15 +23,15 @@ const (
 // assuming Ctrl+N. Desktops 1-16.
 func (h *Host) switchToDesktop(desktop int) {
 	branchkit.Logf("windows", "switch_space → desktop %d", desktop)
-	if err := h.plugin.Call("native.switch_space", map[string]any{"space_id": desktop}, nil); err != nil {
+	if err := h.plugin.NativeSwitchSpace(desktop); err != nil {
 		branchkit.Logf("windows", "switch to desktop %d: %v", desktop, err)
 	}
 }
 
 // cursorPosition returns the current cursor location, or ok=false.
 func (h *Host) cursorPosition() (x, y int, ok bool) {
-	var info branchkit.NativeCursorInfoResponse
-	if err := h.plugin.Call("native.cursor_info", nil, &info); err != nil {
+	info, err := h.plugin.NativeCursorInfo()
+	if err != nil {
 		return 0, 0, false
 	}
 	return info.X, info.Y, true
@@ -51,8 +51,8 @@ func (h *Host) cursorPosition() (x, y int, ok bool) {
 // space when no display contains the point. Returns 0 only when spaces can't
 // be listed.
 func (h *Host) originDesktopOrdinal(displays []branchkit.DisplayInfo, pointX, pointY int) int {
-	var spaces branchkit.NativeListSpacesResponse
-	if err := h.plugin.Call("native.list_spaces", nil, &spaces); err != nil {
+	spaces, err := h.plugin.NativeListSpaces()
+	if err != nil {
 		branchkit.Logf("windows", "move-to-space: list spaces: %v", err)
 		return 0
 	}
@@ -65,7 +65,7 @@ func (h *Host) originDesktopOrdinal(displays []branchkit.DisplayInfo, pointX, po
 	}
 	ordinal, firstActive, matched := 0, 0, 0
 	var order []string
-	for _, s := range spaces.Spaces {
+	for _, s := range spaces {
 		if s.SpaceType != "user" {
 			continue
 		}
@@ -102,8 +102,8 @@ func (h *Host) handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 		return
 	}
 
-	var wm branchkit.WorldModel
-	if err := h.plugin.Call("native.world_model", nil, &wm); err != nil {
+	wm, err := h.plugin.NativeWorldModel(nil)
+	if err != nil {
 		branchkit.Logf("windows", "move-to-space: get world model: %v", err)
 		return
 	}
@@ -130,10 +130,8 @@ func (h *Host) handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 
 	// Fallback: AppleScript to find frontmost window position
 	if !found {
-		var result branchkit.NativeRunApplescriptResponse
-		err := h.plugin.Call("native.run_applescript", map[string]string{
-			"script": `tell application "System Events" to tell (first process whose frontmost is true) to get position of window 1`,
-		}, &result)
+		result, err := h.plugin.NativeRunApplescript(
+			`tell application "System Events" to tell (first process whose frontmost is true) to get position of window 1`)
 		if err == nil && result.ExitCode == 0 {
 			parts := strings.Split(result.Stdout, ",")
 			if len(parts) == 2 {
@@ -174,11 +172,7 @@ func (h *Host) handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	clickY := winY + 10
 
 	// Warp cursor to title bar
-	warpReq := struct {
-		X int `json:"x"`
-		Y int `json:"y"`
-	}{X: clickX, Y: clickY}
-	if err := h.plugin.Call("native.warp_cursor", warpReq, nil); err != nil {
+	if err := h.plugin.NativeWarpCursor(clickX, clickY); err != nil {
 		branchkit.Logf("windows", "move-to-space: warp cursor: %v", err)
 		return
 	}
@@ -227,11 +221,7 @@ func (h *Host) handleMoveToSpace(activeWindowID *string, space int, stay bool) {
 	}
 
 	if restoreCursor {
-		restoreReq := struct {
-			X int `json:"x"`
-			Y int `json:"y"`
-		}{X: origCursorX, Y: origCursorY}
-		if err := h.plugin.Call("native.warp_cursor", restoreReq, nil); err != nil {
+		if err := h.plugin.NativeWarpCursor(origCursorX, origCursorY); err != nil {
 			branchkit.Logf("windows", "cursor restore: %v", err)
 		}
 	}
@@ -258,7 +248,8 @@ func releaseOnce(fn func()) func() {
 // plugin callers by the operation auth layer — the grab half of the drag
 // trick had been failing silently through it.)
 func (h *Host) mouseButton(direction string) {
-	if err := h.plugin.Call("input.mouse_button", map[string]any{"button": "left", "direction": direction}, nil); err != nil {
+	left := "left"
+	if err := h.plugin.InputMouseButton(&left, direction); err != nil {
 		branchkit.Logf("windows", "mouse_button %s: %v", direction, err)
 	}
 }
