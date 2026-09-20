@@ -249,7 +249,7 @@ func releaseOnce(fn func()) func() {
 // trick had been failing silently through it.)
 func (h *Host) mouseButton(direction string) {
 	left := "left"
-	if err := h.plugin.InputMouseButton(&left, direction); err != nil {
+	if err := h.plugin.InputMouseButton(direction, &left); err != nil {
 		branchkit.Logf("windows", "mouse_button %s: %v", direction, err)
 	}
 }
