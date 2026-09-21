@@ -3,12 +3,14 @@
   "id": "windows",
   "name": "Windows",
   "icon": "grid",
-  "privileges": [
-    "windows",
-    "input",
-    "shell",
-    "display"
-  ],
+  "requires": {
+    "privileges": [
+      "windows",
+      "input",
+      "shell",
+      "display"
+    ]
+  },
   "version": "1.0.0",
   "min_api_version": "0.1.0",
   "description": "Native window management \u2014 snap, move to space, switch desktops. Uses built-in OS primitives without a tiling system.",
